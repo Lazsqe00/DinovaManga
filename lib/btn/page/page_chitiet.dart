@@ -11,8 +11,6 @@ class PageChitiet extends StatelessWidget {
 
   final controller = Get.find<MangaController>();
 
-  // MangaDetail currentDeital =
-
   @override
   Widget build(BuildContext context) {
     // final manga = Get.arguments;//lấy dữ liệu từ trang page_home
@@ -79,11 +77,29 @@ class PageChitiet extends StatelessWidget {
                                   fontWeight: .bold,
                                 ),
                               ),
-                              SizedBox(height: 10),
+                              Row(
+                                children: [
+                                  Text('Trạng thái: '),
+                                  Container(
+                                    padding: EdgeInsets.all(3),
+                                    decoration: BoxDecoration(
+                                      color: Colors.red,
+                                      borderRadius:  BorderRadius.circular(10.0),
+                                    ),
+                                    child: Text(
+                                      '${detail.status}',
+                                    style: TextStyle(
+                                      color: Colors.white,
+                                    ),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                              // SizedBox(height: 10),
                               Text('Tác giả: ${detail.author}'),
-                              SizedBox(height: 10),
+                              // SizedBox(height: 10),
                               Text('Thể loại: Đang cập nhật'),
-                              SizedBox(height: 10),
+                              // SizedBox(height: 10),
                               Row(
                                 children: [
                                   Text('Đánh giá: '),
@@ -95,7 +111,7 @@ class PageChitiet extends StatelessWidget {
                                   Text('4.5'),
                                 ],
                               ),
-                              SizedBox(height: 10),
+                              // SizedBox(height: 10),
 
                               SizedBox(
                                 width: double.infinity,
@@ -161,7 +177,7 @@ class PageChitiet extends StatelessWidget {
                       child: Row(
                         mainAxisAlignment: .spaceBetween,
                         children: [
-                          Text('Sắp xếp theo:'),
+                          Text('Sắp xếp:'),
                           Obx(
                             () => Icon(
                               controller.isAscending.value
@@ -184,8 +200,10 @@ class PageChitiet extends StatelessWidget {
                       color: Colors.white,
                       borderRadius: BorderRadius.circular(8),
                       border: Border.all(
-                        color: Colors.grey.shade300,
+                        color: Colors.grey.shade400,
+                        width: 3,
                       ), // Tạo viền cho khung
+
                     ),
                     child: Scrollbar(
                       child: Obx(() {

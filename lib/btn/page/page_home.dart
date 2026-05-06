@@ -173,7 +173,7 @@ Widget recentMangaCard({
     onTap: () {
       // Navigator.push(context, MaterialPageRoute(builder: (context) => PageChitiet(),));
       controller.currentManga.value = manga;
-      Get.to(PageChitiet());//lấy thông tin bộ truyện ném qua trang chi tiết
+      Get.to(PageChitiet());
     },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
