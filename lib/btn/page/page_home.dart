@@ -94,6 +94,8 @@ class HomeScreen extends StatelessWidget {
               height: 250,
               margin: EdgeInsetsGeometry.all(2),
               child: FutureBuilder<List<MangaModel>>(
+                // snapshot dùng để kiểm tra dữ liệu trả về,
+
                 future: controller.fetchManga("truyen_hoan_thanh"),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {

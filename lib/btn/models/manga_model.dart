@@ -1,7 +1,7 @@
 class MangaModel {
-  String title;
-  String thumbUrl;
-  String slug;
+  String title; // tên truyện
+  String thumbUrl; // đường dẫn URL hình ảnh truyện
+  String slug; // slug là 1 cái đường dẫn để chuyển qua trang chi tiết
 
   MangaModel({
     required this.title,
@@ -17,6 +17,7 @@ class MangaModel {
     };
   }
 
+  // hàm để chuyển đổi dữ liệu từ JSON thành đối tượng MangaModel
   factory MangaModel.fromJson(Map<String, dynamic> json) {
     return MangaModel(
       title: json['name'] as String,
