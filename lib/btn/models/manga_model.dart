@@ -3,18 +3,10 @@ class MangaModel {
   String thumbUrl; // đường dẫn URL hình ảnh truyện
   String slug; // slug là 1 cái đường dẫn để chuyển qua trang chi tiết
 
-  MangaModel({
-    required this.title,
-    required this.thumbUrl,
-    required this.slug,
-  });
+  MangaModel({required this.title, required this.thumbUrl, required this.slug});
 
   Map<String, dynamic> toMap() {
-    return {
-      'title': this.title,
-      'thumbUrl': this.thumbUrl,
-      'slug': this.slug,
-    };
+    return {'title': this.title, 'thumbUrl': this.thumbUrl, 'slug': this.slug};
   }
 
   // hàm để chuyển đổi dữ liệu từ JSON thành đối tượng MangaModel
