@@ -37,7 +37,9 @@ class MangaController extends GetxController {
 
   Future<Map<String, dynamic>> _fetchMangaDetail(String slug) async {
     final res = await http.get(
-      Uri.parse("https://otruyenapi.com/v1/api/truyen-tranh/$slug"),
+      Uri.parse(
+        "${mangaResources.baseUrl}${mangaResources.endpoints["thong_tin_truyen"]}/$slug",
+      ),
     );
     if (res.statusCode == 200) {
       final json = jsonDecode(res.body);

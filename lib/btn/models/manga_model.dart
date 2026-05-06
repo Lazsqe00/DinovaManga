@@ -3,18 +3,10 @@ class MangaModel {
   String thumbUrl;
   String slug;
 
-  MangaModel({
-    required this.title,
-    required this.thumbUrl,
-    required this.slug,
-  });
+  MangaModel({required this.title, required this.thumbUrl, required this.slug});
 
   Map<String, dynamic> toMap() {
-    return {
-      'title': this.title,
-      'thumbUrl': this.thumbUrl,
-      'slug': this.slug,
-    };
+    return {'title': this.title, 'thumbUrl': this.thumbUrl, 'slug': this.slug};
   }
 
   factory MangaModel.fromJson(Map<String, dynamic> json) {
