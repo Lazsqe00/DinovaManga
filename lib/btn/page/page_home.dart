@@ -1,4 +1,5 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_search.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +63,13 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(
               Icons.search,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => const SearchScreen(),
+                ),
+              );
+            },
             iconSize: 29.0,
           ),
           IconButton(
