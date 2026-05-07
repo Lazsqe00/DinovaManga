@@ -7,194 +7,172 @@ import 'package:get/get.dart';
 import '../models/manga_model.dart';
 
 class SearchScreen extends StatefulWidget {
-  const SearchScreen({super.key});
+  SearchScreen({super.key});
 
   @override
   State<SearchScreen> createState() => _SearchScreenState();
 }
 
 class _SearchScreenState extends State<SearchScreen> {
-  late final MangaSearchController controller;
-  final TextEditingController _textController = TextEditingController();
-  final FocusNode _focusNode = FocusNode();
-  final RxString _inputText = ''.obs;
-
-  bool _hasSearched = false;
+  final controller = Get.put(MangaSearchController());
+  final textController = TextEditingController();
+  final scrollController = ScrollController();
 
   @override
   void initState() {
     super.initState();
-    controller = Get.put(MangaSearchController(), permanent: false);
-    _focusNode.requestFocus();
+    // Khi cuộn tới cuối danh sách thì tải thêm
+    scrollController.addListener(() async {
+      if (scrollController.position.atEdge && scrollController.position.pixels != 0) {
+        await controller.loadMore();
+        setState(() {});
+      }
+    });
   }
 
   @override
   void dispose() {
-    _textController.dispose();
-    _focusNode.dispose();
-    _inputText.close();
+    textController.dispose();
+    scrollController.dispose();
     Get.delete<MangaSearchController>();
     super.dispose();
   }
 
-  void _onSearch() {
-    final query = _textController.text.trim();
+  void _search() async {
+    final query = textController.text.trim();
     if (query.isEmpty) return;
-    _focusNode.unfocus();
-    setState(() => _hasSearched = true);
-    controller.search(query);
+    FocusScope.of(context).unfocus();
+    await controller.search(query); 
+    setState(() {});
   }
 
-  void _onClear() {
-    _textController.clear();
-    _inputText.value = '';
-    controller.clearSearch();
-    setState(() => _hasSearched = false);
-    _focusNode.requestFocus();
+  void _clear() {
+    textController.clear();
+    controller.clearSearch(); 
+    setState(() {});
   }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final isDark = theme.brightness == Brightness.dark;
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.inversePrimary,
+        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         titleSpacing: 0,
         title: TextField(
-          controller: _textController,
-          focusNode: _focusNode,
+          controller: textController,
+          autofocus: true,
           textInputAction: TextInputAction.search,
-          onChanged: (value) => _inputText.value = value,
-          onSubmitted: (_) => _onSearch(),
-          style: const TextStyle(fontSize: 16),
+          onSubmitted: (_) => _search(),
+          onChanged: (_) => setState(() {}),
+          style: TextStyle(fontSize: 16),
           decoration: InputDecoration(
             hintText: 'Tìm kiếm truyện...',
             border: InputBorder.none,
-            hintStyle: TextStyle(
-              color: isDark ? Colors.white54 : Colors.black45,
-            ),
           ),
         ),
         actions: [
-          Obx(() {
-            if (_inputText.value.isNotEmpty) {
-              return IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: _onClear,
-              );
-            }
-            return const SizedBox.shrink();
-          }),
-          IconButton(icon: const Icon(Icons.search), onPressed: _onSearch),
+          if (textController.text.isNotEmpty)
+            IconButton(icon: Icon(Icons.clear), onPressed: _clear),
+          IconButton(icon: Icon(Icons.search), onPressed: _search),
         ],
       ),
-      body: Obx(() {
-        if (controller.isSearching.value) {
-          return const Center(child: CircularProgressIndicator());
-        }
-
-        if (_hasSearched && controller.searchResults.isEmpty) {
-          return _buildEmptyResult(theme);
-        }
-
-        if (!_hasSearched) {
-          return _buildInitialState(theme);
-        }
-
-        return _buildSearchResults(theme);
-      }),
+      body: _buildBody(),
     );
   }
+  
+  Widget _buildBody() {
+    // Đang tải
+    if (controller.isSearching) {
+      return Center(child: CircularProgressIndicator());
+    }
 
-  Widget _buildInitialState(ThemeData theme) {
+    // Chưa tìm lần nào
+    if (controller.currentQuery.isEmpty) {
+      return _buildHint();
+    }
+
+    // Tìm rồi nhưng không có kết quả
+    if (controller.searchResults.isEmpty) {
+      return _buildNoResult();
+    }
+
+    // Có kết quả
+    return _buildResultList();
+  }
+
+  Widget _buildHint() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search,
-            size: 80,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
-          const SizedBox(height: 16),
-          Text(
-            'Tìm kiếm truyện bạn yêu thích',
-            style: TextStyle(
-              fontSize: 16,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
-          ),
+          Icon(Icons.search, size: 80,
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+          SizedBox(height: 16),
+          Text('Tìm kiếm truyện bạn yêu thích',
+              style: TextStyle(fontSize: 16, color: Colors.grey)),
         ],
       ),
     );
   }
 
-  Widget _buildEmptyResult(ThemeData theme) {
+  Widget _buildNoResult() {
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 80,
-            color: theme.colorScheme.primary.withValues(alpha: 0.3),
-          ),
-          const SizedBox(height: 16),
+          Icon(Icons.search_off, size: 80,
+              color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.3)),
+          SizedBox(height: 16),
           Text(
-            'Không tìm thấy kết quả\ncho "${controller.currentQuery.value}"',
+            'Không tìm thấy kết quả\ncho "${controller.currentQuery}"',
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 16,
-              color: theme.colorScheme.onSurface.withValues(alpha: 0.5),
-            ),
+            style: TextStyle(fontSize: 16, color: Colors.grey),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildSearchResults(ThemeData theme) {
-    return NotificationListener<ScrollNotification>(
-      onNotification: (notification) {
-        if (notification is ScrollEndNotification &&
-            notification.metrics.extentAfter == 0) {
-          controller.loadMore();
-        }
-        return false;
-      },
-      child: ListView.separated(
-        padding: const EdgeInsets.symmetric(vertical: 8),
-        itemCount: controller.searchResults.length,
-        separatorBuilder: (_, __) => Divider(
-          height: 1,
-          indent: 16,
-          endIndent: 16,
-        ),
-        itemBuilder: (context, index) {
-          if (index == controller.searchResults.length) {
-            return const Padding(
-              padding: EdgeInsets.all(16.0),
-              child: Center(child: CircularProgressIndicator()),
-            );
-          }
-          final manga = controller.searchResults[index];
-          return _SearchResultCard(manga: manga);
-        },
-      ),
+  Widget _buildResultList() {
+    final results = controller.searchResults;
+    return ListView.separated(
+      controller: scrollController,
+      padding: EdgeInsets.all(8),
+      itemCount: results.length,
+      separatorBuilder: (_, __) =>
+          Divider(height: 1, indent: 16, endIndent: 16),
+      itemBuilder: (context, index) => _SearchResultCard(manga: results[index]),
     );
   }
 }
 
-class _SearchResultCard extends StatelessWidget {
+class _SearchResultCard extends StatefulWidget {
   final MangaModel manga;
+  _SearchResultCard({required this.manga});
 
-  const _SearchResultCard({required this.manga});
+  @override
+  State<_SearchResultCard> createState() => _SearchResultCardState();
+}
+
+// AutomaticKeepAliveClientMixin để không bị load lại khi cuộn khuất màn hình
+class _SearchResultCardState extends State<_SearchResultCard> with AutomaticKeepAliveClientMixin {
+  late Future<dynamic> _detailFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    final mangaController = Get.find<MangaController>();
+    // gọi API 1 lần lúc khởi tạo và lưu vào biến
+    _detailFuture = mangaController.fetchMangaDetail(widget.manga.slug);
+  }
+
+  //giữ lại trạng thái khi cuộn màn hình
+  @override
+  bool get wantKeepAlive => true;
 
   @override
   Widget build(BuildContext context) {
-    final mangaController = Get.find<MangaController>();
+    super.build(context);
 
     return GestureDetector(
       onTap: () {
@@ -204,75 +182,73 @@ class _SearchResultCard extends StatelessWidget {
         child: Row(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Ảnh bìa truyện
             Container(
-              margin: const EdgeInsets.all(8.0),
-              height: 170,
+              margin: EdgeInsets.all(8),
               width: 120,
+              height: 170,
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
                 image: DecorationImage(
                   fit: BoxFit.cover,
-                  image: NetworkImage(
-                    mangaResources.imageBaseUrl + manga.thumbUrl,
-                  ),
+                  image: NetworkImage(mangaResources.imageBaseUrl + widget.manga.thumbUrl),
                 ),
               ),
             ),
-            FutureBuilder(
-              future: mangaController.fetchMangaDetail(manga.slug),
-              builder: (context, snapshot) {
-                if (!snapshot.hasData) {
-                  return Expanded(
-                    child: Center(child: CircularProgressIndicator()),
-                  );
-                }
-                if (snapshot.hasError) {
-                  return const Expanded(child: SizedBox.shrink());
-                }
-                final data = snapshot.data!;
-                final time = DateTime.parse(data.updatedAt);
-                return Expanded(
-                  child: Padding(
-                    padding: const EdgeInsets.all(10),
+            // Thông tin truyện
+            Expanded(
+              child: FutureBuilder(
+                future: _detailFuture, // Truyền biến Future đã lưu ở initState vào đây
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                      child: Padding(
+                        padding: EdgeInsets.all(20.0),
+                        child: CircularProgressIndicator(),
+                      ),
+                    );
+                  }
+                  if (snapshot.hasError) {
+                    return SizedBox.shrink();
+                  }
+
+                  final detail = snapshot.data!;
+                  final updatedAt = DateTime.parse(detail.updatedAt);
+
+                  return Padding(
+                    padding: EdgeInsets.all(10),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          manga.title,
-                          style: const TextStyle(
-                            fontSize: 16,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 5),
-                        if (data.chapters.isNotEmpty)
+                        // Tên truyện
+                        Text(widget.manga.title,
+                            style: TextStyle(
+                                fontSize: 16, fontWeight: FontWeight.bold)),
+                        SizedBox(height: 5),
+                        // Số chương
+                        if (detail.chapters.isNotEmpty)
                           Padding(
-                            padding: const EdgeInsets.only(bottom: 5),
-                            child: Text(
-                              "Latest chapter ${data.chapters.length}",
-                              style: const TextStyle(fontSize: 13),
-                            ),
+                            padding: EdgeInsets.only(bottom: 5),
+                            child: Text('Latest chapter ${detail.chapters.length}',
+                                style: TextStyle(fontSize: 13)),
                           ),
+                        // Mô tả (bỏ thẻ HTML <p>)
                         Text(
-                          data.content
-                              .replaceAll("<p>", "")
-                              .replaceAll("</p>", ""),
+                          detail.content
+                              .replaceAll('<p>', '')
+                              .replaceAll('</p>', ''),
                           maxLines: 3,
-                          style: const TextStyle(
-                            fontSize: 12,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 12, color: Colors.grey),
                         ),
-                        const SizedBox(height: 20),
-                        Text(
-                          "${time.day}/${time.month}/${time.year}",
-                          style: const TextStyle(fontSize: 13),
-                        ),
+                        SizedBox(height: 20),
+                        // Ngày cập nhật
+                        Text('${updatedAt.day}/${updatedAt.month}/${updatedAt.year}',
+                            style: TextStyle(fontSize: 13)),
                       ],
                     ),
-                  ),
-                );
-              },
+                  );
+                },
+              ),
             ),
           ],
         ),
