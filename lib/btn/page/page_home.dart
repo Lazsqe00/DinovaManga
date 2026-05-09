@@ -1,9 +1,11 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 import '../controller/manga_controller.dart';
+import '../controller/search_controller.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
 
@@ -37,6 +39,8 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   final controller = Get.put(MangaController());
+  // Đăng ký SearchMangaController để dùng trong màn hình tìm kiếm
+  final searchController = Get.put(SearchMangaController());
 
   @override
   Widget build(BuildContext context) {
@@ -62,7 +66,13 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(
               Icons.search,
             ),
-            onPressed: () {},
+            onPressed: () {
+              // Mở màn hình tìm kiếm bằng SearchDelegate
+              showSearch(
+                context: context,
+                delegate: MangaSearchDelegate(),
+              );
+            },
             iconSize: 29.0,
           ),
           IconButton(
