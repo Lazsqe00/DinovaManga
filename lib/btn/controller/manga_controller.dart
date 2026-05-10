@@ -1,5 +1,8 @@
 import 'dart:convert';
+import 'dart:ui';
 
+import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
@@ -12,6 +15,12 @@ import '../models/manga_resource.dart';
 class MangaController extends GetxController {
   var lsManga = <MangaModel>[].obs;
   var isLoading = true.obs;
+
+  var showChapters = true.obs; // ẩn/hiện điều hướng trang đọc truyện
+
+  // var currentManga =Rxn<MangaModel>(); //dùng cho object có thể null, tự động update UI
+  // var currentMangaDetail = Rxn<MangaDetail>();
+  // var isAscending = false.obs;
 
   @override
   void onInit() {
@@ -54,4 +63,49 @@ class MangaController extends GetxController {
     final items = await _fetchMangaDetail(slug);
     return MangaDetail.fromJson(items);
   }
+
+  Future<Map<String, dynamic>> fetchChapterModel(String chapterApiUrl) async {
+    final response = await http.get(Uri.parse(chapterApiUrl));
+    if (response.statusCode == 200) {
+      final json = jsonDecode(
+        response.body,
+      ); //chuyển đổi về kdl mà Dart có thể hiểu được
+      return json["data"];
+    } else {
+      return Future.error("Không thể tải nội dung truyện");
+    }
+  }
+
+  void toggle() {
+    showChapters.value = !showChapters.value;
+  }
+
+  void nextChapter(MangaDetail detail, int currentIndex, int offset) {
+    var newIndex = currentIndex + offset;
+    if (newIndex >= 0 && newIndex < detail.chapters.length) {
+      var nextChapter = detail.chapters[newIndex];
+      print("Đang chuyển tới: ${nextChapter.chapterName}");
+      Get.off(
+        () => PageDocTruyen(
+          chuong: nextChapter.chapterName,
+          chapter: nextChapter,
+          detail: detail,
+          currentIndex: newIndex,
+        ),
+        preventDuplicates: false,
+      );
+    }
+    else {
+      Get.rawSnackbar(
+        message: "Không còn chương nào nữa!",
+        maxWidth: 250,
+        borderRadius: 30,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.black38,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        margin: EdgeInsets.only(bottom: 50),
+      );
+    }
+  }
+
 }

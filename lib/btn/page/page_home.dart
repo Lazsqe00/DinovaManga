@@ -1,4 +1,5 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -167,8 +168,12 @@ Widget recentMangaCard({
   required MangaModel manga,
   required BuildContext context,
 }) {
+  final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.to(PageChitiet1(manga: manga,));
+
+    },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
       height: 200,
@@ -237,7 +242,9 @@ Widget newReleasesCard({
 }) {
   final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.to(PageChitiet1(manga: manga,));
+    },
     child: Card(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
