@@ -1,4 +1,5 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_search.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -62,7 +63,13 @@ class HomeScreen extends StatelessWidget {
             icon: Icon(
               Icons.search,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (context) => SearchScreen(),
+                ),
+              );
+            },
             iconSize: 29.0,
           ),
           IconButton(
@@ -94,6 +101,8 @@ class HomeScreen extends StatelessWidget {
               height: 250,
               margin: EdgeInsetsGeometry.all(2),
               child: FutureBuilder<List<MangaModel>>(
+                // snapshot dùng để kiểm tra dữ liệu trả về,
+
                 future: controller.fetchManga("truyen_hoan_thanh"),
                 builder: (context, snapshot) {
                   if (snapshot.hasError) {

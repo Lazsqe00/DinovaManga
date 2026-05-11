@@ -14,7 +14,10 @@ class MangaResource {
 
 MangaResource mangaResources = MangaResource(
   name: "otruyen",
+  // baseUrl + endpoints[key]!
+  // baseUrl là gốc + đường dẫn endpoints đường dẫn đằng sau
   baseUrl: "https://otruyenapi.com/v1/api",
+  // đường dẫn ảnh kết hợp với base
   imageBaseUrl: "https://img.otruyenapi.com/uploads/comics/",
   endpoints: {
     "home": "/home",
