@@ -1,5 +1,6 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_tim_kiem_chuong.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,6 +15,18 @@ class PageDanhSachChuong extends StatelessWidget {
       appBar: AppBar(
         title: Text('Danh sách chương truyện'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.search),
+            onPressed: () {
+              // Mở trang tìm kiếm
+              showSearch(
+                context: context,
+                delegate: TimKiemChuong(detail: detail),
+              );
+            },
+          ),
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
