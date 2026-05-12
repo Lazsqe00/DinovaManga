@@ -1,12 +1,14 @@
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
 
-import '../Database/database_helper.dart';
+import '../database/database_helper.dart';
 import '../helper/dialog.dart';
+import '../models/chapter_model.dart';
 import '../models/manga_model.dart';
 
 class BookmarkController extends GetxController {
-  var bookmarks = <MangaModel>[].obs;
+  var mangas = <MangaModel>[].obs;
+  var chapters = <ChapterModel>[].obs;
   final DatabaseHelper _db = DatabaseHelper();
 
   @override
@@ -17,25 +19,50 @@ class BookmarkController extends GetxController {
 
   Future<void> _initDatabase() async {
     await _db.open();
-    final data = await _db.getDS();
-    bookmarks.assignAll(data);
+    final data = await _db.getDSManga();
+    mangas.assignAll(data);
+
+    final dataChapters = await _db.getDSChapters();
+    chapters.assignAll(dataChapters);
   }
 
-  void bookmark(BuildContext context, MangaModel manga) async {
-    bool flag = bookmarks.any((element) => element.slug == manga.slug);
+  void mangaBookmark(BuildContext context, MangaModel manga) async {
+    bool flag = mangas.any((element) => element.slug == manga.slug);
     if (flag) {
-      await _db.delete(manga.slug);
-      bookmarks.removeWhere((e) => e.slug == manga.slug);
+      await _db.deleteManga(manga.slug);
+      mangas.removeWhere((e) => e.slug == manga.slug);
       showSnackBar(context, "Đã xóa khỏi yêu thích");
     } else {
-      await _db.insert(manga);
-      bookmarks.add(manga);
+      await _db.insertManga(manga);
+      mangas.insert(0, manga);
       showSnackBar(context, "Đã thêm vào yêu thích");
     }
   }
 
-  bool isBookmarked(String slug) {
-    return bookmarks.any((element) => element.slug == slug);
+  bool isBookmarkedManga(String slug) {
+    return mangas.any((element) => element.slug == slug);
+  }
+
+  void chapterBookmark(BuildContext context, ChapterModel chapter) async {
+    bool flag = chapters.any(
+      (element) => element.chapterApiData == chapter.chapterApiData,
+    );
+
+    if (flag) {
+      await _db.deleteChapter(chapter.chapterApiData);
+      chapters.removeWhere(
+        (element) => element.chapterApiData == chapter.chapterApiData,
+      );
+      showSnackBar(context, "Đã xóa chương khỏi danh sách lưu");
+    } else {
+      await _db.insertChapter(chapter);
+      chapters.insert(0, chapter);
+      showSnackBar(context, "Đã lưu chương thành công");
+    }
+  }
+
+  bool isBookmarkedChapter(String chapterApiData) {
+    return chapters.any((element) => element.chapterApiData == chapterApiData);
   }
 
   @override

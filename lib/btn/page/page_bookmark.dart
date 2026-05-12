@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 
 import '../Widget/manga_bookmark.dart';
 import '../controller/bookmark_controller.dart';
+import '../widget/chapter_bookmark.dart';
 
 class Favorites extends StatelessWidget {
   final BookmarkController controller = Get.put(BookmarkController());
@@ -26,10 +27,7 @@ class Favorites extends StatelessWidget {
           ),
         ),
         body: TabBarView(
-          children: [
-            buildMangaList(context),
-            //buildChapter
-          ],
+          children: [buildMangaList(context), buildChapterList(context)],
         ),
       ),
     );

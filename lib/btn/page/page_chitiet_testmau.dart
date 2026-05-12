@@ -1,6 +1,7 @@
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_model.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_dschuong_testmau.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -23,9 +24,9 @@ class PageChitiet1 extends StatelessWidget {
           Obx(
             () => IconButton(
               onPressed: () {
-                controllerBookMark.bookmark(context, manga);
+                controllerBookMark.mangaBookmark(context, manga);
               },
-              icon: controllerBookMark.isBookmarked(manga.slug)
+              icon: controllerBookMark.isBookmarkedManga(manga.slug)
                   ? Icon(Icons.bookmark_add)
                   : Icon(Icons.bookmark_border_outlined),
               iconSize: 29.0,
@@ -104,24 +105,13 @@ class PageChitiet1 extends StatelessWidget {
                               ),
                               Text('Tác giả: ${detail.author}'),
                               Text('Thể loại: Đang cập nhật'),
-
-                              //Không có đánh giá
-                              // Row(
-                              //   children: [
-                              //     Text('Đánh giá: '),
-                              //     Icon(
-                              //       Icons.star,
-                              //       color: Colors.yellow,
-                              //       size: 20,
-                              //     ),
-                              //     Text('4.5'),
-                              //   ],
-                              // ),
                               SizedBox(
                                 width: double.infinity,
                                 //chiếm hết chiều ngang
                                 child: ElevatedButton(
-                                  onPressed: () {},
+                                  onPressed: () {
+                                    Get.to(PageDanhSachChuong(detail: detail));
+                                  },
                                   child: Text(
                                     'Đọc ngay',
                                     style: TextStyle(fontWeight: .bold),
