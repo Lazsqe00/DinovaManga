@@ -1,10 +1,12 @@
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapterAPI_model.dart';
+import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
 import '../controller/bookmark_controller.dart';
+import '../helper/dialog.dart';
 
 Widget buildChapterList(BuildContext context) {
   final controllerBookmark = Get.find<BookmarkController>();
@@ -42,9 +44,7 @@ Widget buildChapterList(BuildContext context) {
             motion: ScrollMotion(),
             children: [
               SlidableAction(
-                onPressed: (context) {
-                  controllerBookmark.chapterBookmark(context, chapter);
-                },
+                onPressed: (context) => _xoa(context, chapter),
                 backgroundColor: Colors.red,
                 foregroundColor: Colors.white,
                 icon: Icons.delete,
@@ -136,4 +136,15 @@ Widget buildChapterList(BuildContext context) {
       },
     );
   });
+}
+
+void _xoa(BuildContext context, ChapterModel chapter) async {
+  final controllerBookmark = Get.find<BookmarkController>();
+  String? confirm = await showConfirmDialog(
+    context!,
+    "Bạn có muốn xóa ${chapter.filename!}",
+  );
+  if (confirm == "ok") {
+    controllerBookmark.chapterBookmark(context, chapter);
+  }
 }

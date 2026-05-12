@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
+import '../helper/dialog.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
@@ -34,9 +35,7 @@ Widget buildMangaList(BuildContext context) {
               motion: ScrollMotion(),
               children: [
                 SlidableAction(
-                  onPressed: (context) {
-                    controller_bookmark.mangaBookmark(context, manga);
-                  },
+                  onPressed: (context) => _xoa(context, manga),
                   backgroundColor: Colors.red,
                   foregroundColor: Colors.white,
                   icon: Icons.delete,
@@ -146,4 +145,15 @@ Widget buildMangaList(BuildContext context) {
       ),
     );
   });
+}
+
+Future<void> _xoa(BuildContext context, MangaModel manga) async {
+  final controllerBookmark = Get.find<BookmarkController>();
+  String? confirm = await showConfirmDialog(
+    context!,
+    "Bạn có muốn xóa ${manga.title!}",
+  );
+  if (confirm == "ok") {
+    controllerBookmark.mangaBookmark(context, manga);
+  }
 }
