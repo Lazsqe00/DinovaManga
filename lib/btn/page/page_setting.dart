@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../controller/manga_controller.dart';
+import 'page_history.dart';
 
 class SettingsScreen extends StatelessWidget {
   @override
@@ -21,13 +23,26 @@ class SettingsScreen extends StatelessWidget {
             title: Text(Get.isDarkMode ? "Dark Theme" : "Light Theme"),
             trailing: Switch(
               value: Get.isDarkMode,
-              onChanged: (value) {
+              onChanged: (value) async {
+                final prefs = await SharedPreferences.getInstance();
                 if (Get.isDarkMode) {
                   Get.changeThemeMode(ThemeMode.light);
-                } else
+                  await prefs.setBool('isDark', false);
+                } else {
                   Get.changeThemeMode(ThemeMode.dark);
+                  await prefs.setBool('isDark', true);
+                }
               },
             ),
+          ),
+          Divider(),
+          ListTile(
+            leading: Icon(Icons.history),
+            title: Text("History"),
+            trailing: Icon(Icons.chevron_right),
+            onTap: () {
+              Get.to(() => PageHistory());
+            },
           ),
           Divider(),
           ListTile(

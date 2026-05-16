@@ -1,3 +1,4 @@
+import 'package:dieu65130478_flutter_app/btn/controller/history_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_model.dart';
@@ -201,7 +202,8 @@ Widget recentMangaCard({
   // final controller = Get.find<MangaController>();
   return GestureDetector(
     onTap: () {
-      Get.to(PageChitiet1(manga: manga,), preventDuplicates: false);//cho phép mở lại chính trang này
+      Get.find<HistoryController>().addToHistory(manga);
+      Get.to(PageChitiet1(manga: manga), preventDuplicates: false);//cho phép mở lại chính trang này
     },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
