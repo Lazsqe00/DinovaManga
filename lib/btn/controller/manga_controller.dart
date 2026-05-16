@@ -3,11 +3,11 @@ import 'dart:ui';
 
 import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
-import 'package:dieu65130478_flutter_app/helper/network.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../helper/network.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';

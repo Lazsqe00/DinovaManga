@@ -3,12 +3,12 @@ import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
-import 'package:dieu65130478_flutter_app/helper/dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
 
+import '../helper/dialog.dart';
 import '../models/managa_detail.dart';
 
 Widget buildChapterList(BuildContext context) {

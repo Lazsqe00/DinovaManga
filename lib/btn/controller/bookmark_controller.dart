@@ -1,9 +1,10 @@
 import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_model.dart';
-import 'package:dieu65130478_flutter_app/helper/dialog.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:get/get.dart';
+
+import '../helper/dialog.dart';
 
 class BookmarkController extends GetxController{
   var mangas = <MangaModel>[].obs;

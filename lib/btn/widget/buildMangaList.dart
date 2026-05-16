@@ -4,10 +4,11 @@ import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_resource.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
-import 'package:dieu65130478_flutter_app/helper/dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:get/get.dart';
+
+import '../helper/dialog.dart';
 
 Widget buildMangaList(BuildContext context) {
   final controller_manga = Get.find<MangaController>();
