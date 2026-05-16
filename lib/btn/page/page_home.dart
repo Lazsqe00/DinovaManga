@@ -1,4 +1,7 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_bookmark.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_network_error.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -69,95 +72,110 @@ class HomeScreen extends StatelessWidget {
             icon: const Icon(
               Icons.bookmark_border_outlined,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageBookmark(),));
+            },
             iconSize: 29.0,
           ),
         ],
       ),
 
-      body: SingleChildScrollView(
-        child: Column(
-          crossAxisAlignment: .start,
-          children: [
-            Container(
-              margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
-              child: Text(
-                "Recent Manga",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-                textAlign: TextAlign.start,
-              ),
-            ),
-            Container(
-              height: 250,
-              margin: EdgeInsetsGeometry.all(2),
-              child: FutureBuilder<List<MangaModel>>(
-                future: controller.fetchManga("truyen_hoan_thanh"),
-                builder: (context, snapshot) {
-                  if (snapshot.hasError) {
-                    print("Lỗi rầu: ${snapshot.error.toString()}");
-                    return Center(
-                      child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
-                    );
-                  }
-                  if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
-                  }
-                  List<MangaModel> data = snapshot.data!;
-                  return ListView.builder(
-                    scrollDirection: Axis.horizontal,
-                    itemBuilder: (context, index) {
-                      return recentMangaCard(
-                        manga: data[index],
-                        context: context,
+      body: GetBuilder<MangaController>(
+        builder: (controller) {
+          if(controller.isNetworkError){
+            return PageNetworkError(onRefresh: () => controller.refeshAll(),);
+          }
+          return  RefreshIndicator(
+            onRefresh: () async{
+              return controller.refeshAll();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),//kéo được kể cả khi bị lỗi
+              child: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  Container(
+                    margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
+                    child: Text(
+                      "Recent Manga",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Container(
+                    height: 250,
+                    margin: EdgeInsetsGeometry.all(2),
+                    child: FutureBuilder<List<MangaModel>>(
+                      future: controller.fetchManga("truyen_hoan_thanh"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          print("Lỗi rầu: ${snapshot.error.toString()}");
+                          return Center(
+                            child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                          );
+                        }
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        List<MangaModel> data = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return recentMangaCard(
+                              manga: data[index],
+                              context: context,
+                            );
+                          },
+                          itemCount: data.length,
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
+                    child: Text(
+                      "New Releases",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+
+                  FutureBuilder(
+                    future: controller.fetchManga("truyen_dang_phat_hanh"),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        print("Lỗi rầu: ${snapshot.error.toString()}");
+                        return Center(
+                          child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                        );
+                      }
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      List<MangaModel> data = snapshot.data!;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) => newReleasesCard(
+                          manga: data[index],
+                          context: context,
+                        ),
                       );
                     },
-                    itemCount: data.length,
-                  );
-                },
-              ),
-            ),
-            Container(
-              margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
-              child: Text(
-                "New Releases",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
-              ),
-            ),
-
-            FutureBuilder(
-              future: controller.fetchManga("truyen_dang_phat_hanh"),
-              builder: (context, snapshot) {
-                if (snapshot.hasError) {
-                  print("Lỗi rầu: ${snapshot.error.toString()}");
-                  return Center(
-                    child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
-                  );
-                }
-                if (!snapshot.hasData) {
-                  return Center(child: CircularProgressIndicator());
-                }
-                List<MangaModel> data = snapshot.data!;
-                return ListView.builder(
-                  shrinkWrap: true,
-                  physics: NeverScrollableScrollPhysics(),
-                  itemCount: data.length,
-                  itemBuilder: (context, index) => newReleasesCard(
-                    manga: data[index],
-                    context: context,
                   ),
-                );
-              },
+                ],
+              ),
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -167,8 +185,11 @@ Widget recentMangaCard({
   required MangaModel manga,
   required BuildContext context,
 }) {
+  final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.to(PageChitiet1(manga: manga,));
+    },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
       height: 200,
@@ -237,7 +258,9 @@ Widget newReleasesCard({
 }) {
   final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.to(PageChitiet1(manga: manga,));
+    },
     child: Card(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
