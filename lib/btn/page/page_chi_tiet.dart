@@ -118,6 +118,10 @@ class PageChitiet1 extends StatelessWidget {
                                     'Đọc ngay',
                                     style: TextStyle(fontWeight: .bold),
                                   ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purpleAccent.withValues(alpha: 0.5),
+                                    foregroundColor: Colors.white
+                                  ),
                                 ),
                               ),
                             ],

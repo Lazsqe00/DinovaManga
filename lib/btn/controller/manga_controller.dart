@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:ui';
 
+import 'package:dieu65130478_flutter_app/btn/helper/dialog.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
 import 'package:flutter/material.dart';
@@ -88,31 +89,15 @@ class MangaController extends GetxController {
     showChapters.value = !showChapters.value;
   }
 
-  void nextChapter(MangaDetail detail, int currentIndex, int offset) {
+  void nextChapter(BuildContext context, MangaDetail detail, int currentIndex, int offset) {
     var newIndex = currentIndex + offset;
     if (newIndex >= 0 && newIndex < detail.chapters.length) {
       var nextChapter = detail.chapters[newIndex];
       print("Đang chuyển tới: ${nextChapter.chapterName}");
-      Get.off(
-        () => PageDocTruyen(
-          chuong: nextChapter.chapterName,
-          chapter: nextChapter,
-          detail: detail,
-          currentIndex: newIndex,
-        ),
-        preventDuplicates: false,
-      );
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageDocTruyen(chuong: nextChapter.chapterName, chapter: nextChapter, detail: detail, currentIndex: newIndex),));
     }
     else {
-      Get.rawSnackbar(
-        message: "Không còn chương nào nữa!",
-        maxWidth: 250,
-        borderRadius: 30,
-        snackPosition: SnackPosition.BOTTOM,
-        backgroundColor: Colors.black38,
-        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
-        margin: EdgeInsets.only(bottom: 50),
-      );
+      showSnackBar(context, "Không còn chương nào nữa");
     }
   }
 
