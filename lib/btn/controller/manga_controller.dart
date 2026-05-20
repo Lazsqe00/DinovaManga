@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/category_model.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
@@ -74,6 +75,27 @@ class MangaController extends GetxController {
     } else {
       return Future.error("Không thể tải nội dung truyện");
     }
+  }
+
+  // Lấy danh sách tất cả thể loại
+  Future<List<CategoryModel>> fetchCategories() async {
+    final url = mangaResources.baseUrl + mangaResources.endpoints["the_loai"]!;
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode == 200) {
+      Map<String, dynamic> jsonData = jsonDecode(response.body);
+      List<dynamic> items = jsonData['data']['items'];
+      return items.map((e) => CategoryModel.fromJson(e)).toList();
+    } else {
+      return Future.error("Không có dữ liệu thể loại");
+    }
+  }
+
+  // Lấy danh sách manga theo thể loại (dùng slug của thể loại)
+  Future<List<MangaModel>> fetchMangaByCategory(String categorySlug) async {
+    final url =
+        "${mangaResources.baseUrl}${mangaResources.endpoints["the_loai"]}/$categorySlug";
+    List<dynamic> items = await _fetchMangaData(url);
+    return items.map((e) => MangaModel.fromJson(e)).toList();
   }
 
   void toggle() {

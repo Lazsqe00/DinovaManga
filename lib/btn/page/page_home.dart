@@ -1,6 +1,8 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/models/category_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_category.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -133,6 +135,64 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
             ),
+
+            // --- Thanh thể loại cuộn ngang ---
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Category",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 45,
+              margin: EdgeInsetsGeometry.fromLTRB(5, 10, 5, 5),
+
+              child: FutureBuilder<List<CategoryModel>>(
+                future: controller.fetchCategories(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  List<CategoryModel> categories = snapshot.data!;
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final cat = categories[index];
+                      return GestureDetector(
+                        onTap: () => Get.to(() => PageCategory(category: cat)),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            cat.name,
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            // --- New Releases ---
             Container(
               margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
               child: Text(
