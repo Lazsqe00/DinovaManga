@@ -1,3 +1,5 @@
+import 'package:dieu65130478_flutter_app/btn/controller/bookmark_controller.dart';
+import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_tim_kiem_chuong.dart';
@@ -8,6 +10,7 @@ class PageDanhSachChuong extends StatelessWidget {
   PageDanhSachChuong({super.key, required this.detail});
 
   MangaDetail detail;
+  final controllerBookmark = Get.find<BookmarkController>();
 
   @override
   Widget build(BuildContext context) {
@@ -38,6 +41,7 @@ class PageDanhSachChuong extends StatelessWidget {
               child: ListView.builder(
                 itemCount: detail.chapters.length,
                   itemBuilder: (context, index) {
+                    ChapterModel chapter = detail.chapters[index];
                     final chapter = detail.chapters[index];
                     return Card(
                       child: ListTile(
@@ -45,7 +49,16 @@ class PageDanhSachChuong extends StatelessWidget {
                           Get.to(() => PageDocTruyen(chuong: chapter.chapterName, chapter: chapter, detail: detail, currentIndex: index,));
                         },
                         title: Text('Chương ${chapter.chapterName}'),
-
+                        trailing: Obx(
+                          () =>  IconButton(
+                              onPressed: () {
+                                //dổi hình ngôi sao, dùng Obx()
+                                controllerBookmark.chapterBookmark(context, chapter,detail);
+                              },
+                              icon: controllerBookmark.isBookmartChapter(chapter.chapterApiData)? Icon(Icons.star):Icon(Icons.star_border),
+                          ),
+                        )
+=======
                         //API Không có lượt xem, ngày câp nhật cho từng chương
                         // trailing: Column(
                         //   children: [

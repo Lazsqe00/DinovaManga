@@ -1,8 +1,11 @@
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
+import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import '../controller/bookmark_controller.dart';
+
 
 class PageDocTruyen extends StatelessWidget {
   PageDocTruyen({
@@ -18,12 +21,15 @@ class PageDocTruyen extends StatelessWidget {
   MangaDetail detail;
   int currentIndex;
   final controller = Get.find<MangaController>();
+  final controllerBookmart = Get.find<BookmarkController>();
+
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body tràn dưới AppBar để khi ẩn AppBar không bị khoảng trắng
+      // body tràn dưới AppBar
       extendBodyBehindAppBar: true,
+      extendBody: true,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         //định nghĩa size cho appBar
@@ -31,6 +37,19 @@ class PageDocTruyen extends StatelessWidget {
           () => controller.showChapters.value
               ? AppBar(
                   title: Text('Chương ${chuong}'),
+                  surfaceTintColor: Colors.transparent,
+                  backgroundColor: Colors.black.withValues(alpha: 0.35),
+                  elevation: 0,
+
+                  actions: [
+              IconButton(
+                  onPressed: () {
+                    controllerBookmart.chapterBookmark(context, chapter, detail);
+                  },
+                  icon:controllerBookmart.isBookmartChapter(chapter.chapterApiData)? Icon(Icons.star): Icon(Icons.star_border)
+              )
+                          ],
+                ) : SizedBox.shrink(), //trả về rồng nếu false
                   backgroundColor: Theme.of(context).colorScheme.inversePrimary,
                 )
               : SizedBox.shrink(), //trả về rồng nếu false
@@ -43,12 +62,25 @@ class PageDocTruyen extends StatelessWidget {
           height: controller.showChapters.value ? 70 : 0, // Ẩn hiện
           child: controller.showChapters.value
               ? BottomAppBar(
+                  color: Colors.black.withValues(alpha: 0.35),
+                  surfaceTintColor: Colors.transparent,
+                  elevation: 0,
                   color: Theme.of(context,).colorScheme.inversePrimary.withValues(alpha: 0.9),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_back),
+                        onPressed: () => controller.nextChapter( context,detail, currentIndex, -1,),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward),
+                        onPressed: () => controller.nextChapter(context, detail, currentIndex, 1,),
+                      ),
+                    ],
+                  ),
+                )
+              : null,
                         onPressed: () => controller.nextChapter(detail, currentIndex, -1,),
                       ),
                       Text(
@@ -68,7 +100,7 @@ class PageDocTruyen extends StatelessWidget {
       //HIỂN THỊ ẢNH
       body: GestureDetector(
         onTap: () => controller.toggle(),
-        child: FutureBuilder<Map<String, dynamic>>(
+        child: FutureBuilder<ChapterApiModel>(
           future: controller.fetchChapterModel(chapter.chapterApiData),
           builder: (context, asyncSnapshot) {
             if (asyncSnapshot.hasError) {
@@ -81,6 +113,19 @@ class PageDocTruyen extends StatelessWidget {
             }
 
             var data = asyncSnapshot.data!;
+            // final String domain = data['domain_cdn'];
+            // final item = data['item'];
+            // final String path = item['chapter_path'];
+            // final List images = item['chapter_image'];
+            print("Snapshot data: ${asyncSnapshot.data}"); // Kiểm tra xem data có thực sự tồn tại không
+            print("Đang chuẩn bị vào hàm getImagesURL...");
+            var getImages = controller.getImagesURL(asyncSnapshot.data!);
+            return ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: getImages.length,
+              itemBuilder: (context, index) {
+                return Image.network(
+                  getImages[index],
             final String domain = data['domain_cdn'];
             final item = data['item'];
             final String path = item['chapter_path'];

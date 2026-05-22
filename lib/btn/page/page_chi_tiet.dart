@@ -1,3 +1,4 @@
+import 'package:dieu65130478_flutter_app/btn/controller/bookmark_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/controller/history_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
@@ -14,6 +15,7 @@ class PageChitiet1 extends StatelessWidget {
 
   MangaModel manga;
   final controller = Get.find<MangaController>();
+  final controllerBookmark = Get.put(BookmarkController());
 
   @override
   Widget build(BuildContext context) {
@@ -21,6 +23,16 @@ class PageChitiet1 extends StatelessWidget {
       appBar: AppBar(
         title: Text('Đọc truyện'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        actions: [
+          Obx(
+            () =>  IconButton(
+                onPressed: () {
+                  controllerBookmark.mangaBookmark(context, manga);
+                },
+                icon: controllerBookmark.isBookmarkManga(manga.slug)?Icon(Icons.bookmark_add):Icon(Icons.bookmark_add_outlined)
+            ),
+          )
+        ],
       ),
 
       body: FutureBuilder<MangaDetail>(
@@ -107,7 +119,6 @@ class PageChitiet1 extends StatelessWidget {
                               //     Text('4.5'),
                               //   ],
                               // ),
-
                               SizedBox(
                                 width: double.infinity,
                                 //chiếm hết chiều ngang
@@ -118,6 +129,10 @@ class PageChitiet1 extends StatelessWidget {
                                   child: Text(
                                     'Đọc ngay',
                                     style: TextStyle(fontWeight: .bold),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.purpleAccent.withValues(alpha: 0.5),
+                                    foregroundColor: Colors.white
                                   ),
                                 ),
                               ),
@@ -158,7 +173,7 @@ class PageChitiet1 extends StatelessWidget {
                     height: 250,
                     margin: EdgeInsetsGeometry.all(2),
                     child: FutureBuilder<List<MangaModel>>(
-                      future: controller.fetchManga("truyen_hoan_thanh"),
+                      future: controller.fetchManga("truyen_coming_soon"),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           print("Lỗi rầu: ${snapshot.error.toString()}");

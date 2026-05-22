@@ -1,11 +1,12 @@
 import 'dart:convert';
 import 'dart:ui';
-
+import 'package:dieu65130478_flutter_app/btn/helper/dialog.dart';
+import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
+import '../helper/network.dart';
 import '../models/chapterAPI_model.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
@@ -18,8 +19,8 @@ class MangaController extends GetxController {
   var isLoading = true.obs;
 
   var showChapters = true.obs; // ẩn/hiện điều hướng trang đọc truyện
-
-  // var currentManga =Rxn<MangaModel>(); //dùng cho object có thể null, tự động update UI
+  bool isNetworkError = false;
+  // var currentManga =Rxn<MangaModel>(); 
   // var currentMangaDetail = Rxn<MangaDetail>();
   // var isAscending = false.obs;
 
@@ -77,15 +78,55 @@ class MangaController extends GetxController {
     }
   }
 
+  Future<ChapterApiModel> fetchChapterModel(String chapterApiUrl) async{
+    final item = await _fetchChapterModel(chapterApiUrl);
+    return ChapterApiModel.fromMap(item);
+  }
+
+  List<String> getImagesURL(ChapterApiModel model){
+    return model.chapterImage.map((value) => "${model.domainCdn}/${model.chapterPath}/$value",).toList();
+  }
+
   void toggle() {
     showChapters.value = !showChapters.value;
   }
 
-  void nextChapter(MangaDetail detail, int currentIndex, int offset) {
+
+  void nextChapter(BuildContext context, MangaDetail detail, int currentIndex, int offset) {
     var newIndex = currentIndex + offset;
     if (newIndex >= 0 && newIndex < detail.chapters.length) {
       var nextChapter = detail.chapters[newIndex];
       print("Đang chuyển tới: ${nextChapter.chapterName}");
+      Navigator.of(context).push(MaterialPageRoute(builder: (context) => PageDocTruyen(chuong: nextChapter.chapterName, chapter: nextChapter, detail: detail, currentIndex: newIndex),));
+    }
+    else {
+      showSnackBar(context, "Không còn chương nào nữa");
+    }
+  }
+
+  Future<List<MangaModel>> fetchMangaWithNetworkCheck(String category) async{
+    var isConnect = await checkConnectNetwork();
+    if(isConnect==false){
+      isNetworkError = true;
+      throw Exception("Không có kêt nối Internet");
+    }
+    else{
+      isNetworkError = false;
+      return fetchManga(category);
+    }
+  }
+
+  Future<void> refeshAll() async{
+    bool isConnect = await checkConnectNetwork();
+    if(isConnect==false){
+      isNetworkError=true;
+    }
+    else{
+      isNetworkError=false;
+    }
+    update();
+    await Future.delayed(const Duration(milliseconds: 2000));
+  }
       Get.off(
         () => PageDocTruyen(
           chuong: nextChapter.chapterName,

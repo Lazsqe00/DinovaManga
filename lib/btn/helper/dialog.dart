@@ -29,4 +29,4 @@ void showSnackBar(BuildContext context, String message, [int second = 3]) {
       duration: Duration(seconds: second),
     ),
   );
-}
+
