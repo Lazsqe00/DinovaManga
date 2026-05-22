@@ -21,6 +21,7 @@ class HistoryController extends GetxController {
     final prefs = await SharedPreferences.getInstance();
     final List<String> savedList = prefs.getStringList(_key) ?? [];
     historyList.value = savedList.map((item) {
+      // phân tách chuỗi thành các phần tử
       final parts = item.split('|||');
       return MangaModel(slug: parts[0], title: parts[1], thumbUrl: parts[2]);
     }).toList();
