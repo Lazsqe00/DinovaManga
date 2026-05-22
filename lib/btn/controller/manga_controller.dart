@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/chapterAPI_model.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
@@ -53,5 +54,21 @@ class MangaController extends GetxController {
   Future<MangaDetail> fetchMangaDetail(String slug) async {
     final items = await _fetchMangaDetail(slug);
     return MangaDetail.fromJson(items);
+  }
+
+  Future<Map<String, dynamic>> _fetchChapterModel(String chapterApiUrl) async {
+    final response = await http.get(Uri.parse(chapterApiUrl));
+    if (response.statusCode == 200) {
+      final json = jsonDecode(response.body);
+      return json["data"];
+    } else {
+      print("Không có dữ liệu trả về");
+      return Future.error("Không thể tải nội dung truyện");
+    }
+  }
+
+  Future<ChapterDataAPI> fetchChapterModel(String chapterApiUrl) async {
+    final items = await _fetchChapterModel(chapterApiUrl);
+    return ChapterDataAPI.fromJson(items);
   }
 }
