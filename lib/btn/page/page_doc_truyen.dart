@@ -1,11 +1,11 @@
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
-import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../controller/bookmark_controller.dart';
 
+import '../controller/bookmark_controller.dart';
+import '../models/chapterAPI_model.dart';
 
 class PageDocTruyen extends StatelessWidget {
   PageDocTruyen({
@@ -22,7 +22,6 @@ class PageDocTruyen extends StatelessWidget {
   int currentIndex;
   final controller = Get.find<MangaController>();
   final controllerBookmart = Get.find<BookmarkController>();
-
 
   @override
   Widget build(BuildContext context) {
@@ -42,15 +41,18 @@ class PageDocTruyen extends StatelessWidget {
                   elevation: 0,
 
                   actions: [
-              IconButton(
-                  onPressed: () {
-                    controllerBookmart.chapterBookmark(context, chapter, detail);
-                  },
-                  icon:controllerBookmart.isBookmartChapter(chapter.chapterApiData)? Icon(Icons.star): Icon(Icons.star_border)
-              )
-                          ],
-                ) : SizedBox.shrink(), //trả về rồng nếu false
-                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                    IconButton(
+                      onPressed: () {
+                        controllerBookmart.chapterBookmark(context, chapter);
+                      },
+                      icon:
+                          controllerBookmart.isBookmarkedChapter(
+                            chapter.chapterApiData,
+                          )
+                          ? Icon(Icons.star)
+                          : Icon(Icons.star_border),
+                    ),
+                  ],
                 )
               : SizedBox.shrink(), //trả về rồng nếu false
         ),
@@ -65,42 +67,37 @@ class PageDocTruyen extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.35),
                   surfaceTintColor: Colors.transparent,
                   elevation: 0,
-                  color: Theme.of(context,).colorScheme.inversePrimary.withValues(alpha: 0.9),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_back),
-                        onPressed: () => controller.nextChapter( context,detail, currentIndex, -1,),
+                        onPressed: () => controller.nextChapter(
+                          context,
+                          detail,
+                          currentIndex,
+                          -1,
+                        ),
                       ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
-                        onPressed: () => controller.nextChapter(context, detail, currentIndex, 1,),
+                        onPressed: () => controller.nextChapter(
+                          context,
+                          detail,
+                          currentIndex,
+                          1,
+                        ),
                       ),
                     ],
                   ),
                 )
               : null,
-                        onPressed: () => controller.nextChapter(detail, currentIndex, -1,),
-                      ),
-                      Text(
-                        "Chương $chuong",
-                        style: const TextStyle(fontWeight: FontWeight.bold),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.arrow_forward),
-                        onPressed: () => controller.nextChapter(detail, currentIndex, 1,),
-                      ),
-                    ],
-                  ),
-                )
-              : const SizedBox.shrink(),
         ),
       ),
       //HIỂN THỊ ẢNH
       body: GestureDetector(
         onTap: () => controller.toggle(),
-        child: FutureBuilder<ChapterApiModel>(
+        child: FutureBuilder<ChapterDataAPI>(
           future: controller.fetchChapterModel(chapter.chapterApiData),
           builder: (context, asyncSnapshot) {
             if (asyncSnapshot.hasError) {
@@ -117,28 +114,18 @@ class PageDocTruyen extends StatelessWidget {
             // final item = data['item'];
             // final String path = item['chapter_path'];
             // final List images = item['chapter_image'];
-            print("Snapshot data: ${asyncSnapshot.data}"); // Kiểm tra xem data có thực sự tồn tại không
+            print(
+              "Snapshot data: ${asyncSnapshot.data}",
+            ); // Kiểm tra xem data có thực sự tồn tại không
             print("Đang chuẩn bị vào hàm getImagesURL...");
             var getImages = controller.getImagesURL(asyncSnapshot.data!);
             return ListView.builder(
+              //lướt tới đâu render tới đó
               padding: EdgeInsets.zero,
               itemCount: getImages.length,
               itemBuilder: (context, index) {
                 return Image.network(
                   getImages[index],
-            final String domain = data['domain_cdn'];
-            final item = data['item'];
-            final String path = item['chapter_path'];
-            final List images = item['chapter_image'];
-
-            return ListView.builder(
-              padding: EdgeInsets.zero,
-              itemCount: images.length,
-              itemBuilder: (context, index) {
-                String fileName = images[index]['image_file'];
-                String imageUrl = '$domain/$path/$fileName';
-                return Image.network(
-                  imageUrl,
                   fit: BoxFit.fitWidth,
                   //tự co dãn để lắp đầy chiểu rộng khung chứa
                   loadingBuilder: (context, child, loadingProgress) {

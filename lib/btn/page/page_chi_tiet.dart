@@ -25,13 +25,15 @@ class PageChitiet1 extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           Obx(
-            () =>  IconButton(
-                onPressed: () {
-                  controllerBookmark.mangaBookmark(context, manga);
-                },
-                icon: controllerBookmark.isBookmarkManga(manga.slug)?Icon(Icons.bookmark_add):Icon(Icons.bookmark_add_outlined)
+            () => IconButton(
+              onPressed: () {
+                controllerBookmark.mangaBookmark(context, manga);
+              },
+              icon: controllerBookmark.isBookmarkedManga(manga.slug)
+                  ? Icon(Icons.bookmark_add)
+                  : Icon(Icons.bookmark_add_outlined),
             ),
-          )
+          ),
         ],
       ),
 
@@ -94,13 +96,11 @@ class PageChitiet1 extends StatelessWidget {
                                     padding: EdgeInsets.all(3),
                                     decoration: BoxDecoration(
                                       color: Colors.red,
-                                      borderRadius:  BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: Text(
                                       '${detail.status}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
+                                      style: TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ],
@@ -124,15 +124,16 @@ class PageChitiet1 extends StatelessWidget {
                                 //chiếm hết chiều ngang
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Get.to(PageDanhSachChuong(detail: detail,));
+                                    Get.to(PageDanhSachChuong(detail: detail));
                                   },
                                   child: Text(
                                     'Đọc ngay',
                                     style: TextStyle(fontWeight: .bold),
                                   ),
                                   style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.purpleAccent.withValues(alpha: 0.5),
-                                    foregroundColor: Colors.white
+                                    backgroundColor: Colors.purpleAccent
+                                        .withValues(alpha: 0.5),
+                                    foregroundColor: Colors.white,
                                   ),
                                 ),
                               ),
@@ -178,13 +179,13 @@ class PageChitiet1 extends StatelessWidget {
                         if (snapshot.hasError) {
                           print("Lỗi rầu: ${snapshot.error.toString()}");
                           return Center(
-                            child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                            child: Text(
+                              "Lỗi rầu: ${snapshot.error.toString()}",
+                            ),
                           );
                         }
                         if (!snapshot.hasData) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(child: CircularProgressIndicator());
                         }
                         List<MangaModel> data = snapshot.data!;
                         return ListView.builder(
@@ -218,7 +219,10 @@ Widget recentMangaCard({
   return GestureDetector(
     onTap: () {
       Get.find<HistoryController>().addToHistory(manga);
-      Get.to(PageChitiet1(manga: manga), preventDuplicates: false);//cho phép mở lại chính trang này
+      Get.to(
+        PageChitiet1(manga: manga),
+        preventDuplicates: false,
+      ); //cho phép mở lại chính trang này
     },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
@@ -239,10 +243,7 @@ Widget recentMangaCard({
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
+                  colors: [Colors.transparent, Colors.black87],
                 ),
               ),
             ),
@@ -267,10 +268,7 @@ Widget recentMangaCard({
                   ),
                   Text(
                     "Chương mới nhất",
-                    style: TextStyle(
-                      color: Colors.white60,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.white60, fontSize: 13),
                   ),
                 ],
               ),

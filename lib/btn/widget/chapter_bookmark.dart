@@ -67,67 +67,80 @@ Widget buildChapterList(BuildContext context) {
                 return Center(child: CircularProgressIndicator());
               }
               ChapterDataAPI chapterAPI = snapshot.data!;
-              return Card(
-                child: Row(
-                  children: [
-                    Container(
-                      margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
-                      height: 140,
-                      width: 120,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        image: DecorationImage(
-                          fit: BoxFit.cover,
-                          image: NetworkImage(
-                            "${chapterAPI.domainCdn}/${chapterAPI.chapterPath}/${chapterAPI.images[2]}",
+              return GestureDetector(
+                onTap: () {
+                  // int currentIndex = controllerBookmark.mangas.indexWhere(
+                  //   (element) =>
+                  //       element.slug == chapter.,
+                  // );
+                },
+                child: Card(
+                  child: Row(
+                    children: [
+                      Container(
+                        margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
+                        height: 140,
+                        width: 120,
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10),
+                          image: DecorationImage(
+                            fit: BoxFit.cover,
+                            image: NetworkImage(
+                              "${chapterAPI.domainCdn}/${chapterAPI.chapterPath}/${chapterAPI.images[2]}",
+                            ),
                           ),
                         ),
                       ),
-                    ),
-                    SizedBox(width: 12),
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: .start,
-                        children: [
-                          Text(
-                            "Chapter ${chapter.chapterName}",
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 1,
-                          ),
-                          SizedBox(height: 8),
-                          Text(
-                            chapter.filename,
-                            style: TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w400,
-                              color: Colors.black87,
-                            ),
-                            maxLines: 2,
-                          ),
-                          SizedBox(height: 12),
-                          Container(
-                            padding: EdgeInsetsGeometry.fromLTRB(10, 5, 10, 5),
-                            decoration: BoxDecoration(
-                              color: Colors.grey[200],
-                              borderRadius: BorderRadius.circular(5),
-                            ),
-                            child: Text(
-                              "Đã lưu",
+                      SizedBox(width: 12),
+                      Expanded(
+                        child: Column(
+                          crossAxisAlignment: .start,
+                          children: [
+                            Text(
+                              "Chapter ${chapter.chapterName}",
                               style: TextStyle(
-                                fontSize: 12,
-                                color: Colors.grey,
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 1,
+                            ),
+                            SizedBox(height: 8),
+                            Text(
+                              chapter.filename,
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.w400,
+                                color: Colors.black87,
+                              ),
+                              maxLines: 2,
+                            ),
+                            SizedBox(height: 12),
+                            Container(
+                              padding: EdgeInsetsGeometry.fromLTRB(
+                                10,
+                                5,
+                                10,
+                                5,
+                              ),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(5),
+                              ),
+                              child: Text(
+                                "Đã lưu",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Colors.grey,
+                                ),
                               ),
                             ),
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
-                    ),
-                    Icon(Icons.chevron_right, color: Colors.grey),
-                  ],
+                      Icon(Icons.chevron_right, color: Colors.grey),
+                    ],
+                  ),
                 ),
               );
             },
