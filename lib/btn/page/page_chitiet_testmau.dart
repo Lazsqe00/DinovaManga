@@ -1,13 +1,11 @@
-import 'package:dieu65130478_flutter_app/btn/controller/bookmark_controller.dart';
-import 'package:dieu65130478_flutter_app/btn/controller/history_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/controller/manga_controller.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:dieu65130478_flutter_app/btn/models/manga_model.dart';
-import 'package:dieu65130478_flutter_app/btn/page/page_danh_sach_chuong.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_dschuong_testmau.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:readmore/readmore.dart';
 
+import '../controller/bookmark_controller.dart';
 import '../models/manga_resource.dart';
 
 class PageChitiet1 extends StatelessWidget {
@@ -15,8 +13,7 @@ class PageChitiet1 extends StatelessWidget {
 
   MangaModel manga;
   final controller = Get.find<MangaController>();
-  final controllerBookmark = Get.put(BookmarkController());
-
+  final controllerBookMark = Get.put(BookmarkController());
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -25,13 +22,16 @@ class PageChitiet1 extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         actions: [
           Obx(
-            () =>  IconButton(
-                onPressed: () {
-                  controllerBookmark.mangaBookmark(context, manga);
-                },
-                icon: controllerBookmark.isBookmarkManga(manga.slug)?Icon(Icons.bookmark_add):Icon(Icons.bookmark_add_outlined)
+            () => IconButton(
+              onPressed: () {
+                controllerBookMark.mangaBookmark(context, manga);
+              },
+              icon: controllerBookMark.isBookmarkedManga(manga.slug)
+                  ? Icon(Icons.bookmark_add)
+                  : Icon(Icons.bookmark_border_outlined),
+              iconSize: 29.0,
             ),
-          )
+          ),
         ],
       ),
 
@@ -94,45 +94,27 @@ class PageChitiet1 extends StatelessWidget {
                                     padding: EdgeInsets.all(3),
                                     decoration: BoxDecoration(
                                       color: Colors.red,
-                                      borderRadius:  BorderRadius.circular(10.0),
+                                      borderRadius: BorderRadius.circular(10.0),
                                     ),
                                     child: Text(
                                       '${detail.status}',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                      ),
+                                      style: TextStyle(color: Colors.white),
                                     ),
                                   ),
                                 ],
                               ),
                               Text('Tác giả: ${detail.author}'),
                               Text('Thể loại: Đang cập nhật'),
-                              //Không có đánh giá
-                              // Row(
-                              //   children: [
-                              //     Text('Đánh giá: '),
-                              //     Icon(
-                              //       Icons.star,
-                              //       color: Colors.yellow,
-                              //       size: 20,
-                              //     ),
-                              //     Text('4.5'),
-                              //   ],
-                              // ),
                               SizedBox(
                                 width: double.infinity,
                                 //chiếm hết chiều ngang
                                 child: ElevatedButton(
                                   onPressed: () {
-                                    Get.to(PageDanhSachChuong(detail: detail,));
+                                    Get.to(PageDanhSachChuong(detail: detail));
                                   },
                                   child: Text(
                                     'Đọc ngay',
                                     style: TextStyle(fontWeight: .bold),
-                                  ),
-                                  style: ElevatedButton.styleFrom(
-                                    backgroundColor: Colors.purpleAccent.withValues(alpha: 0.5),
-                                    foregroundColor: Colors.white
                                   ),
                                 ),
                               ),
@@ -147,22 +129,6 @@ class PageChitiet1 extends StatelessWidget {
                   //Mô tả truyện
                   Text('Giới thiệu truyện:'),
                   SizedBox(height: 6),
-                  ReadMoreText(
-                    detail.content.replaceAll('<p>', '').replaceAll('</p>', ''),
-                    style: TextStyle(fontSize: 12, color: Colors.grey),
-                    trimCollapsedText: 'Xem thêm',
-                    trimExpandedText: 'Thu gọn',
-                    moreStyle: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                    lessStyle: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black54,
-                    ),
-                  ),
                   SizedBox(height: 10),
 
                   Text('Danh sách chương: ${detail.chapters.length} chapter'),
@@ -173,18 +139,18 @@ class PageChitiet1 extends StatelessWidget {
                     height: 250,
                     margin: EdgeInsetsGeometry.all(2),
                     child: FutureBuilder<List<MangaModel>>(
-                      future: controller.fetchManga("truyen_coming_soon"),
+                      future: controller.fetchManga("truyen_hoan_thanh"),
                       builder: (context, snapshot) {
                         if (snapshot.hasError) {
                           print("Lỗi rầu: ${snapshot.error.toString()}");
                           return Center(
-                            child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                            child: Text(
+                              "Lỗi rầu: ${snapshot.error.toString()}",
+                            ),
                           );
                         }
                         if (!snapshot.hasData) {
-                          return Center(
-                            child: CircularProgressIndicator(),
-                          );
+                          return Center(child: CircularProgressIndicator());
                         }
                         List<MangaModel> data = snapshot.data!;
                         return ListView.builder(
@@ -217,8 +183,10 @@ Widget recentMangaCard({
   // final controller = Get.find<MangaController>();
   return GestureDetector(
     onTap: () {
-      Get.find<HistoryController>().addToHistory(manga);
-      Get.to(PageChitiet1(manga: manga), preventDuplicates: false);//cho phép mở lại chính trang này
+      Get.to(
+        PageChitiet1(manga: manga),
+        preventDuplicates: false,
+      ); //cho phép mở lại chính trang này
     },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
@@ -239,10 +207,7 @@ Widget recentMangaCard({
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
+                  colors: [Colors.transparent, Colors.black87],
                 ),
               ),
             ),
@@ -267,10 +232,7 @@ Widget recentMangaCard({
                   ),
                   Text(
                     "Chương mới nhất",
-                    style: TextStyle(
-                      color: Colors.white60,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.white60, fontSize: 13),
                   ),
                 ],
               ),

@@ -19,4 +19,12 @@ class ChapterModel {
       chapterApiData: json['chapter_api_data'] ?? '',
     );
   }
+  factory ChapterModel.fromMap(Map<String, dynamic> map) {
+    return ChapterModel(
+      filename: map['filename'] as String,
+      chapterName: map['chapterName'] as String,
+      chapterTitle: map['chapterTitle'] as String,
+      chapterApiData: map['chapterApiData'] as String,
+    );
+  }
 }

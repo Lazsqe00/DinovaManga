@@ -42,13 +42,13 @@ class PageDanhSachChuong extends StatelessWidget {
                 itemCount: detail.chapters.length,
                   itemBuilder: (context, index) {
                     ChapterModel chapter = detail.chapters[index];
+                    final chapter = detail.chapters[index];
                     return Card(
                       child: ListTile(
                         onTap: () {
                           Get.to(() => PageDocTruyen(chuong: chapter.chapterName, chapter: chapter, detail: detail, currentIndex: index,));
                         },
                         title: Text('Chương ${chapter.chapterName}'),
-
                         trailing: Obx(
                           () =>  IconButton(
                               onPressed: () {
@@ -58,6 +58,19 @@ class PageDanhSachChuong extends StatelessWidget {
                               icon: controllerBookmark.isBookmartChapter(chapter.chapterApiData)? Icon(Icons.star):Icon(Icons.star_border),
                           ),
                         )
+=======
+                        //API Không có lượt xem, ngày câp nhật cho từng chương
+                        // trailing: Column(
+                        //   children: [
+                        //     Row(
+                        //       mainAxisSize: MainAxisSize.min,//lỗi tràn!!!
+                        //       children: [
+                        //         Text('lượt xem'),
+                        //         Icon(Icons.remove_red_eye_outlined),
+                        //       ],
+                        //     ),
+                        //   ],
+                        // ),
                       ),
                     );
                   },

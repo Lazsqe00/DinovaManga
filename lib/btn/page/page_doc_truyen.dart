@@ -4,8 +4,8 @@ import 'package:dieu65130478_flutter_app/btn/models/chapter_model.dart';
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-
 import '../controller/bookmark_controller.dart';
+
 
 class PageDocTruyen extends StatelessWidget {
   PageDocTruyen({
@@ -50,6 +50,9 @@ class PageDocTruyen extends StatelessWidget {
               )
                           ],
                 ) : SizedBox.shrink(), //trả về rồng nếu false
+                  backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+                )
+              : SizedBox.shrink(), //trả về rồng nếu false
         ),
       ),
       //THANH ĐIỀU HƯỚNG DƯỚI
@@ -62,6 +65,7 @@ class PageDocTruyen extends StatelessWidget {
                   color: Colors.black.withValues(alpha: 0.35),
                   surfaceTintColor: Colors.transparent,
                   elevation: 0,
+                  color: Theme.of(context,).colorScheme.inversePrimary.withValues(alpha: 0.9),
                   child: Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
@@ -77,6 +81,20 @@ class PageDocTruyen extends StatelessWidget {
                   ),
                 )
               : null,
+                        onPressed: () => controller.nextChapter(detail, currentIndex, -1,),
+                      ),
+                      Text(
+                        "Chương $chuong",
+                        style: const TextStyle(fontWeight: FontWeight.bold),
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.arrow_forward),
+                        onPressed: () => controller.nextChapter(detail, currentIndex, 1,),
+                      ),
+                    ],
+                  ),
+                )
+              : const SizedBox.shrink(),
         ),
       ),
       //HIỂN THỊ ẢNH
@@ -108,6 +126,19 @@ class PageDocTruyen extends StatelessWidget {
               itemBuilder: (context, index) {
                 return Image.network(
                   getImages[index],
+            final String domain = data['domain_cdn'];
+            final item = data['item'];
+            final String path = item['chapter_path'];
+            final List images = item['chapter_image'];
+
+            return ListView.builder(
+              padding: EdgeInsets.zero,
+              itemCount: images.length,
+              itemBuilder: (context, index) {
+                String fileName = images[index]['image_file'];
+                String imageUrl = '$domain/$path/$fileName';
+                return Image.network(
+                  imageUrl,
                   fit: BoxFit.fitWidth,
                   //tự co dãn để lắp đầy chiểu rộng khung chứa
                   loadingBuilder: (context, child, loadingProgress) {

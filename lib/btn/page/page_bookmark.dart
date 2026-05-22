@@ -1,9 +1,17 @@
 import 'package:dieu65130478_flutter_app/btn/widget/buildChapterList.dart';
 import 'package:dieu65130478_flutter_app/btn/widget/buildMangaList.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class PageBookmark extends StatelessWidget {
-  const PageBookmark({super.key});
+import '../Widget/manga_bookmark.dart';
+import '../controller/bookmark_controller.dart';
+import '../widget/chapter_bookmark.dart';
+
+
+class Favorites extends StatelessWidget {
+  final BookmarkController controller = Get.put(BookmarkController());
+
 
   @override
   Widget build(BuildContext context) {
@@ -32,5 +40,22 @@ class PageBookmark extends StatelessWidget {
     );
   }
 
-
+          title: Text(
+            "Bookmarks",
+            style: Theme.of(context).textTheme.headlineMedium,
+          ),
+          bottom: TabBar(
+            labelColor: Theme.of(context).colorScheme.primary,
+            tabs: [
+              Tab(text: "Manga"),
+              Tab(text: "Chapters"),
+            ],
+          ),
+        ),
+        body: TabBarView(
+          children: [buildMangaList(context), buildChapterList(context)],
+        ),
+      ),
+    );
+  }
 }

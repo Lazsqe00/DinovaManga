@@ -1,14 +1,13 @@
 import 'dart:convert';
 import 'dart:ui';
-
 import 'package:dieu65130478_flutter_app/btn/helper/dialog.dart';
 import 'package:dieu65130478_flutter_app/btn/models/chapter_API_model.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_doc_truyen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-
 import '../helper/network.dart';
+import '../models/chapterAPI_model.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
@@ -21,6 +20,9 @@ class MangaController extends GetxController {
 
   var showChapters = true.obs; // ẩn/hiện điều hướng trang đọc truyện
   bool isNetworkError = false;
+  // var currentManga =Rxn<MangaModel>(); 
+  // var currentMangaDetail = Rxn<MangaDetail>();
+  // var isAscending = false.obs;
 
   @override
   void onInit() {
@@ -64,14 +66,14 @@ class MangaController extends GetxController {
     return MangaDetail.fromJson(items);
   }
 
+
   Future<Map<String, dynamic>> _fetchChapterModel(String chapterApiUrl) async {
     final response = await http.get(Uri.parse(chapterApiUrl));
     if (response.statusCode == 200) {
-      final json = jsonDecode(
-        response.body,
-      ); //chuyển đổi về kdl mà Dart có thể hiểu được
+      final json = jsonDecode(response.body);
       return json["data"];
     } else {
+      print("Không có dữ liệu trả về");
       return Future.error("Không thể tải nội dung truyện");
     }
   }
@@ -88,6 +90,7 @@ class MangaController extends GetxController {
   void toggle() {
     showChapters.value = !showChapters.value;
   }
+
 
   void nextChapter(BuildContext context, MangaDetail detail, int currentIndex, int offset) {
     var newIndex = currentIndex + offset;
@@ -124,5 +127,31 @@ class MangaController extends GetxController {
     update();
     await Future.delayed(const Duration(milliseconds: 2000));
   }
+      Get.off(
+        () => PageDocTruyen(
+          chuong: nextChapter.chapterName,
+          chapter: nextChapter,
+          detail: detail,
+          currentIndex: newIndex,
+        ),
+        preventDuplicates: false,
+      );
+    }
+    else {
+      Get.rawSnackbar(
+        message: "Không còn chương nào nữa!",
+        maxWidth: 250,
+        borderRadius: 30,
+        snackPosition: SnackPosition.BOTTOM,
+        backgroundColor: Colors.black38,
+        padding: EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        margin: EdgeInsets.only(bottom: 50),
+      );
+    }
+  }
 
+  Future<ChapterDataAPI> fetchChapterModel(String chapterApiUrl) async {
+    final items = await _fetchChapterModel(chapterApiUrl);
+    return ChapterDataAPI.fromJson(items);
+  }
 }
