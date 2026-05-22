@@ -54,6 +54,9 @@ dependencies:
   supabase_auth_ui: ^0.5.5
   flutter_otp_text_field:
   readmore: ^3.0.0
+  connectivity_plus: ^7.1.1
+  sqflite:
+
 dev_dependencies:
   flutter_test:
     sdk: flutter
