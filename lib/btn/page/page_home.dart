@@ -1,25 +1,45 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+import 'package:dieu65130478_flutter_app/btn/models/category_model.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_category.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_bookmark.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_network_error.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_bookmark.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chitiet_testmau.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_search.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controller/history_controller.dart';
 import '../controller/manga_controller.dart';
 import '../controller/search_controller.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
 
 void main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Đọc theme đã lưu từ SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDark') ?? false;
+
+  runApp(MyApp(isDark: isDark));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isDark;
+  const MyApp({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         brightness: Brightness.light,
@@ -39,8 +59,10 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   final controller = Get.put(MangaController());
+
   // Đăng ký SearchMangaController để dùng trong màn hình tìm kiếm
   final searchController = Get.put(SearchMangaController());
+  final historyController = Get.put(HistoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -49,15 +71,11 @@ class HomeScreen extends StatelessWidget {
         title: Text('Manga Book'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: Icon(
-            Icons.settings,
-          ),
+          icon: Icon(Icons.settings),
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SettingsScreen(),
-              ),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => SettingsScreen()));
           },
           iconSize: 29.0,
         ),
@@ -76,15 +94,108 @@ class HomeScreen extends StatelessWidget {
             iconSize: 29.0,
           ),
           IconButton(
-            icon: const Icon(
-              Icons.bookmark_border_outlined,
-            ),
-            onPressed: () {},
+            icon: const Icon(Icons.bookmark_border_outlined),
+            onPressed: () {
+              Get.to(Favorites());
+            },
             iconSize: 29.0,
           ),
         ],
       ),
 
+      body: GetBuilder<MangaController>(
+        builder: (controller) {
+          if(controller.isNetworkError){
+            return PageNetworkError(onRefresh: () => controller.refeshAll(),);
+          }
+          return  RefreshIndicator(
+            onRefresh: () async{
+              return controller.refeshAll();
+            },
+            child: SingleChildScrollView(
+              physics: const AlwaysScrollableScrollPhysics(),//kéo được kể cả khi bị lỗi
+              child: Column(
+                crossAxisAlignment: .start,
+                children: [
+                  Container(
+                    margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
+                    child: Text(
+                      "Recent Manga",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                      textAlign: TextAlign.start,
+                    ),
+                  ),
+                  Container(
+                    height: 250,
+                    margin: EdgeInsetsGeometry.all(2),
+                    child: FutureBuilder<List<MangaModel>>(
+                      future: controller.fetchManga("truyen_hoan_thanh"),
+                      builder: (context, snapshot) {
+                        if (snapshot.hasError) {
+                          print("Lỗi rầu: ${snapshot.error.toString()}");
+                          return Center(
+                            child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                          );
+                        }
+                        if (!snapshot.hasData) {
+                          return Center(
+                            child: CircularProgressIndicator(),
+                          );
+                        }
+                        List<MangaModel> data = snapshot.data!;
+                        return ListView.builder(
+                          scrollDirection: Axis.horizontal,
+                          itemBuilder: (context, index) {
+                            return recentMangaCard(
+                              manga: data[index],
+                              context: context,
+                            );
+                          },
+                          itemCount: data.length,
+                        );
+                      },
+                    ),
+                  ),
+                  Container(
+                    margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
+                    child: Text(
+                      "New Releases",
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20,
+                      ),
+                    ),
+                  ),
+
+                  FutureBuilder(
+                    future: controller.fetchManga("truyen_dang_phat_hanh"),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        print("Lỗi rầu: ${snapshot.error.toString()}");
+                        return Center(
+                          child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                        );
+                      }
+                      if (!snapshot.hasData) {
+                        return Center(child: CircularProgressIndicator());
+                      }
+                      List<MangaModel> data = snapshot.data!;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: data.length,
+                        itemBuilder: (context, index) => newReleasesCard(
+                          manga: data[index],
+                          context: context,
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
       body: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: .start,
@@ -93,10 +204,7 @@ class HomeScreen extends StatelessWidget {
               margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
               child: Text(
                 "Recent Manga",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 textAlign: TextAlign.start,
               ),
             ),
@@ -113,9 +221,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   }
                   if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return Center(child: CircularProgressIndicator());
                   }
                   List<MangaModel> data = snapshot.data!;
                   return ListView.builder(
@@ -131,14 +237,69 @@ class HomeScreen extends StatelessWidget {
                 },
               ),
             ),
+
+            // --- Thanh thể loại cuộn ngang ---
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                children: [
+                  Text(
+                    "Category",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 20,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            Container(
+              height: 45,
+              margin: EdgeInsetsGeometry.fromLTRB(5, 10, 5, 5),
+
+              child: FutureBuilder<List<CategoryModel>>(
+                future: controller.fetchCategories(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  List<CategoryModel> categories = snapshot.data!;
+                  return ListView.builder(
+                    scrollDirection: Axis.horizontal,
+                    itemCount: categories.length,
+                    itemBuilder: (context, index) {
+                      final cat = categories[index];
+                      return GestureDetector(
+                        onTap: () => Get.to(() => PageCategory(category: cat)),
+                        child: Container(
+                          margin: EdgeInsets.symmetric(horizontal: 5),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: Theme.of(
+                              context,
+                            ).colorScheme.primaryContainer,
+                            borderRadius: BorderRadius.circular(20),
+                          ),
+                          child: Text(
+                            cat.name,
+                            style: TextStyle(fontSize: 13),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                },
+              ),
+            ),
+            // --- New Releases ---
             Container(
               margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
               child: Text(
                 "New Releases",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
 
@@ -159,15 +320,13 @@ class HomeScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: data.length,
-                  itemBuilder: (context, index) => newReleasesCard(
-                    manga: data[index],
-                    context: context,
-                  ),
+                  itemBuilder: (context, index) =>
+                      newReleasesCard(manga: data[index], context: context),
                 );
               },
             ),
-          ],
-        ),
+          );
+        },
       ),
     );
   }
@@ -177,8 +336,12 @@ Widget recentMangaCard({
   required MangaModel manga,
   required BuildContext context,
 }) {
+  final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.find<HistoryController>().addToHistory(manga);
+      Get.to(PageChitiet1(manga: manga));
+    },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
       height: 200,
@@ -198,10 +361,7 @@ Widget recentMangaCard({
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
+                  colors: [Colors.transparent, Colors.black87],
                 ),
               ),
             ),
@@ -226,10 +386,7 @@ Widget recentMangaCard({
                   ),
                   Text(
                     "Chương mới nhất",
-                    style: TextStyle(
-                      color: Colors.white60,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.white60, fontSize: 13),
                   ),
                 ],
               ),
@@ -247,7 +404,10 @@ Widget newReleasesCard({
 }) {
   final controller = Get.find<MangaController>();
   return GestureDetector(
-    onTap: () {},
+    onTap: () {
+      Get.find<HistoryController>().addToHistory(manga);
+      Get.to(PageChitiet1(manga: manga));
+    },
     child: Card(
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -300,9 +460,7 @@ Widget newReleasesCard({
                           padding: EdgeInsetsGeometry.only(bottom: 5),
                           child: Text(
                             "Latest chapter ${data.chapters.length}",
-                            style: TextStyle(
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(fontSize: 13),
                           ),
                         ),
 
