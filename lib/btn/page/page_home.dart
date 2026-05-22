@@ -1,6 +1,9 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_bookmark.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chitiet_testmau.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -57,31 +60,25 @@ class HomeScreen extends StatelessWidget {
         title: Text('Manga Book'),
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         leading: IconButton(
-          icon: Icon(
-            Icons.settings,
-          ),
+          icon: Icon(Icons.settings),
           onPressed: () {
-            Navigator.of(context).push(
-              MaterialPageRoute(
-                builder: (context) => SettingsScreen(),
-              ),
-            );
+            Navigator.of(
+              context,
+            ).push(MaterialPageRoute(builder: (context) => SettingsScreen()));
           },
           iconSize: 29.0,
         ),
         actions: [
           IconButton(
-            icon: Icon(
-              Icons.search,
-            ),
+            icon: Icon(Icons.search),
             onPressed: () {},
             iconSize: 29.0,
           ),
           IconButton(
-            icon: const Icon(
-              Icons.bookmark_border_outlined,
-            ),
-            onPressed: () {},
+            icon: const Icon(Icons.bookmark_border_outlined),
+            onPressed: () {
+              Get.to(Favorites());
+            },
             iconSize: 29.0,
           ),
         ],
@@ -95,10 +92,7 @@ class HomeScreen extends StatelessWidget {
               margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
               child: Text(
                 "Recent Manga",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
                 textAlign: TextAlign.start,
               ),
             ),
@@ -115,9 +109,7 @@ class HomeScreen extends StatelessWidget {
                     );
                   }
                   if (!snapshot.hasData) {
-                    return Center(
-                      child: CircularProgressIndicator(),
-                    );
+                    return Center(child: CircularProgressIndicator());
                   }
                   List<MangaModel> data = snapshot.data!;
                   return ListView.builder(
@@ -137,10 +129,7 @@ class HomeScreen extends StatelessWidget {
               margin: EdgeInsetsGeometry.fromLTRB(5, 10, 0, 5),
               child: Text(
                 "New Releases",
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  fontSize: 20,
-                ),
+                style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20),
               ),
             ),
 
@@ -161,10 +150,8 @@ class HomeScreen extends StatelessWidget {
                   shrinkWrap: true,
                   physics: NeverScrollableScrollPhysics(),
                   itemCount: data.length,
-                  itemBuilder: (context, index) => newReleasesCard(
-                    manga: data[index],
-                    context: context,
-                  ),
+                  itemBuilder: (context, index) =>
+                      newReleasesCard(manga: data[index], context: context),
                 );
               },
             ),
@@ -204,10 +191,7 @@ Widget recentMangaCard({
                 gradient: LinearGradient(
                   begin: Alignment.topCenter,
                   end: Alignment.bottomCenter,
-                  colors: [
-                    Colors.transparent,
-                    Colors.black87,
-                  ],
+                  colors: [Colors.transparent, Colors.black87],
                 ),
               ),
             ),
@@ -232,10 +216,7 @@ Widget recentMangaCard({
                   ),
                   Text(
                     "Chương mới nhất",
-                    style: TextStyle(
-                      color: Colors.white60,
-                      fontSize: 13,
-                    ),
+                    style: TextStyle(color: Colors.white60, fontSize: 13),
                   ),
                 ],
               ),
@@ -309,9 +290,7 @@ Widget newReleasesCard({
                           padding: EdgeInsetsGeometry.only(bottom: 5),
                           child: Text(
                             "Latest chapter ${data.chapters.length}",
-                            style: TextStyle(
-                              fontSize: 13,
-                            ),
+                            style: TextStyle(fontSize: 13),
                           ),
                         ),
 

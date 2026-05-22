@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+import '../models/chapterAPI_model.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
@@ -64,14 +65,14 @@ class MangaController extends GetxController {
     return MangaDetail.fromJson(items);
   }
 
-  Future<Map<String, dynamic>> fetchChapterModel(String chapterApiUrl) async {
+
+  Future<Map<String, dynamic>> _fetchChapterModel(String chapterApiUrl) async {
     final response = await http.get(Uri.parse(chapterApiUrl));
     if (response.statusCode == 200) {
-      final json = jsonDecode(
-        response.body,
-      ); //chuyển đổi về kdl mà Dart có thể hiểu được
+      final json = jsonDecode(response.body);
       return json["data"];
     } else {
+      print("Không có dữ liệu trả về");
       return Future.error("Không thể tải nội dung truyện");
     }
   }
@@ -108,4 +109,8 @@ class MangaController extends GetxController {
     }
   }
 
+  Future<ChapterDataAPI> fetchChapterModel(String chapterApiUrl) async {
+    final items = await _fetchChapterModel(chapterApiUrl);
+    return ChapterDataAPI.fromJson(items);
+  }
 }
