@@ -1,25 +1,37 @@
 import 'package:dieu65130478_flutter_app/btn/models/managa_detail.dart';
+
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:dieu65130478_flutter_app/btn/page/page_chi_tiet.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_bookmark.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_chitiet_testmau.dart';
 import 'package:dieu65130478_flutter_app/btn/page/page_setting.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controller/history_controller.dart';
 import '../controller/manga_controller.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
 
 void main() async {
-  runApp(const MyApp());
+  WidgetsFlutterBinding.ensureInitialized();
+
+  // Đọc theme đã lưu từ SharedPreferences
+  final prefs = await SharedPreferences.getInstance();
+  final isDark = prefs.getBool('isDark') ?? false;
+
+  runApp(MyApp(isDark: isDark));
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  final bool isDark;
+  const MyApp({super.key, required this.isDark});
 
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
+      themeMode: isDark ? ThemeMode.dark : ThemeMode.light,
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
         brightness: Brightness.light,
@@ -39,6 +51,7 @@ class MyApp extends StatelessWidget {
 
 class HomeScreen extends StatelessWidget {
   final controller = Get.put(MangaController());
+  final historyController = Get.put(HistoryController());
 
   @override
   Widget build(BuildContext context) {
@@ -153,8 +166,10 @@ Widget recentMangaCard({
   required MangaModel manga,
   required BuildContext context,
 }) {
+  final controller = Get.find<MangaController>();
   return GestureDetector(
     onTap: () {
+      Get.find<HistoryController>().addToHistory(manga);
       Get.to(PageChitiet1(manga: manga));
     },
     child: Container(
@@ -220,6 +235,7 @@ Widget newReleasesCard({
   final controller = Get.find<MangaController>();
   return GestureDetector(
     onTap: () {
+      Get.find<HistoryController>().addToHistory(manga);
       Get.to(PageChitiet1(manga: manga));
     },
     child: Card(
