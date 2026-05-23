@@ -8,7 +8,7 @@ import '../helper/dialog.dart';
 import '../models/managa_detail.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
-import '../page/page_chitiet_testmau.dart';
+import '../page/page_chi_tiet.dart';
 
 Widget buildMangaList(BuildContext context) {
   final controller_bookmark = Get.find<BookmarkController>();

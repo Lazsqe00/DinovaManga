@@ -19,12 +19,13 @@ class MangaDetail {
 
   factory MangaDetail.fromJson(Map<String, dynamic> json) {
     final chapters = json['chapters'];
+    String slug = json['slug'];
     List<ChapterModel> chapterList = [];
     if (chapters.isNotEmpty) {
       var chapterRaw = json['chapters'][0]['server_data'];
 
       chapterList = chapterRaw
-          .map<ChapterModel>((c) => ChapterModel.fromJson(c))
+          .map<ChapterModel>((c) => ChapterModel.fromJson(c, slug))
           .toList();
     }
 

@@ -15,12 +15,15 @@ class Favorites extends StatelessWidget {
       child: Scaffold(
         appBar: AppBar(
           title: Text(
-            'Bookmark',
+            "Bookmarks",
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           bottom: TabBar(
             labelColor: Theme.of(context).colorScheme.primary,
-            tabs: [Text('Manga'), Text('Chapters')],
+            tabs: [
+              Tab(text: "Manga"),
+              Tab(text: "Chapters"),
+            ],
           ),
         ),
         body: TabBarView(

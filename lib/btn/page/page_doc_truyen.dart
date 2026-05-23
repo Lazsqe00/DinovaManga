@@ -72,21 +72,27 @@ class PageDocTruyen extends StatelessWidget {
                     children: [
                       IconButton(
                         icon: Icon(Icons.arrow_back),
-                        onPressed: () => controller.nextChapter(
-                          context,
-                          detail,
-                          currentIndex,
-                          -1,
-                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          controller.nextChapter(
+                            context,
+                            detail,
+                            currentIndex,
+                            -1,
+                          );
+                        },
                       ),
                       IconButton(
                         icon: Icon(Icons.arrow_forward),
-                        onPressed: () => controller.nextChapter(
-                          context,
-                          detail,
-                          currentIndex,
-                          1,
-                        ),
+                        onPressed: () {
+                          Navigator.pop(context);
+                          controller.nextChapter(
+                            context,
+                            detail,
+                            currentIndex,
+                            1,
+                          );
+                        },
                       ),
                     ],
                   ),

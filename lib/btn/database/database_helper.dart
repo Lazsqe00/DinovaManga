@@ -17,7 +17,7 @@ class DatabaseHelper {
   }
 
   Future<Database?> open() async {
-    String? path = await _getDatabasePath('bookmark.db');
+    String? path = await _getDatabasePath('bookmarks.db');
     database = await openDatabase(
       path!,
       version: 1,
@@ -27,7 +27,8 @@ class DatabaseHelper {
           'TEXT)',
         );
         await db.execute(
-          'CREATE TABLE $tableChapter (chapterApiData TEXT PRIMARY KEY, filename TEXT, chapterName TEXT, chapterTitle TEXT)',
+          'CREATE TABLE $tableChapter (chapterApiData TEXT PRIMARY KEY, '
+          'filename TEXT, chapterName TEXT, chapterTitle TEXT, slug TEXT)',
         );
       },
     );
@@ -61,12 +62,13 @@ class DatabaseHelper {
   Future<void> insertChapter(ChapterModel chapter) async {
     await database!.transaction((Transaction txn) async {
       await txn.rawInsert(
-        'INSERT INTO $tableChapter(chapterApiData, filename, chapterName, chapterTitle) VALUES(?, ?, ?, ?)',
+        'INSERT INTO $tableChapter(chapterApiData, filename, chapterName, chapterTitle, slug) VALUES(?, ?, ?, ?, ?)',
         [
           chapter.chapterApiData,
           chapter.filename,
           chapter.chapterName,
           chapter.chapterTitle,
+          chapter.slug,
         ],
       );
     });

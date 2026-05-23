@@ -7,6 +7,8 @@ import 'package:get/get.dart';
 
 import '../controller/bookmark_controller.dart';
 import '../helper/dialog.dart';
+import '../models/managa_detail.dart';
+import '../page/page_doc_truyen.dart';
 
 Widget buildChapterList(BuildContext context) {
   final controllerBookmark = Get.find<BookmarkController>();
@@ -34,8 +36,7 @@ Widget buildChapterList(BuildContext context) {
       separatorBuilder: (context, index) =>
           Divider(height: 1, color: Colors.grey[300]),
       itemBuilder: (context, index) {
-        final chapter = controllerBookmark.chapters[index];
-
+        ChapterModel chapter = controllerBookmark.chapters[index];
         return Slidable(
           // Specify a key if the Slidable is dismissible.
           key: const ValueKey(0),
@@ -67,81 +68,103 @@ Widget buildChapterList(BuildContext context) {
                 return Center(child: CircularProgressIndicator());
               }
               ChapterDataAPI chapterAPI = snapshot.data!;
-              return GestureDetector(
-                onTap: () {
-                  // int currentIndex = controllerBookmark.mangas.indexWhere(
-                  //   (element) =>
-                  //       element.slug == chapter.,
-                  // );
-                },
-                child: Card(
-                  child: Row(
-                    children: [
-                      Container(
-                        margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
-                        height: 140,
-                        width: 120,
-                        decoration: BoxDecoration(
-                          borderRadius: BorderRadius.circular(10),
-                          image: DecorationImage(
-                            fit: BoxFit.cover,
-                            image: NetworkImage(
-                              "${chapterAPI.domainCdn}/${chapterAPI.chapterPath}/${chapterAPI.images[2]}",
-                            ),
-                          ),
+              return FutureBuilder(
+                future: controllerManga.fetchMangaDetail(chapter.slug),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    print("Lỗi rầu: ${snapshot.error.toString()}");
+                    return Center(
+                      child: Text("Lỗi rầu: ${snapshot.error.toString()}"),
+                    );
+                  }
+                  if (!snapshot.hasData) {
+                    return Center(child: CircularProgressIndicator());
+                  }
+                  MangaDetail detail = snapshot.data!;
+                  return GestureDetector(
+                    onTap: () {
+                      int idx = detail.chapters.indexWhere(
+                        (e) => e.chapterApiData == chapter.chapterApiData,
+                      );
+                      Get.to(
+                        () => PageDocTruyen(
+                          chuong: chapter.chapterName,
+                          chapter: chapter,
+                          detail: detail,
+                          currentIndex: idx,
                         ),
-                      ),
-                      SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: .start,
-                          children: [
-                            Text(
-                              "Chapter ${chapter.chapterName}",
-                              style: TextStyle(
-                                fontSize: 18,
-                                fontWeight: FontWeight.bold,
-                                color: Colors.black87,
-                              ),
-                              maxLines: 1,
-                            ),
-                            SizedBox(height: 8),
-                            Text(
-                              chapter.filename,
-                              style: TextStyle(
-                                fontSize: 16,
-                                fontWeight: FontWeight.w400,
-                                color: Colors.black87,
-                              ),
-                              maxLines: 2,
-                            ),
-                            SizedBox(height: 12),
-                            Container(
-                              padding: EdgeInsetsGeometry.fromLTRB(
-                                10,
-                                5,
-                                10,
-                                5,
-                              ),
-                              decoration: BoxDecoration(
-                                color: Colors.grey[200],
-                                borderRadius: BorderRadius.circular(5),
-                              ),
-                              child: Text(
-                                "Đã lưu",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Colors.grey,
+                      );
+                    },
+                    child: Card(
+                      child: Row(
+                        children: [
+                          Container(
+                            margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
+                            height: 140,
+                            width: 120,
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.circular(10),
+                              image: DecorationImage(
+                                fit: BoxFit.cover,
+                                image: NetworkImage(
+                                  "${chapterAPI.domainCdn}/${chapterAPI.chapterPath}/${chapterAPI.images[2]}",
                                 ),
                               ),
                             ),
-                          ],
-                        ),
+                          ),
+                          SizedBox(width: 12),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: .start,
+                              children: [
+                                Text(
+                                  "Chapter ${chapter.chapterName}",
+                                  style: TextStyle(
+                                    fontSize: 18,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines: 1,
+                                ),
+                                SizedBox(height: 8),
+                                Text(
+                                  chapter.filename,
+                                  style: TextStyle(
+                                    fontSize: 16,
+                                    fontWeight: FontWeight.w400,
+                                    color: Colors.black87,
+                                  ),
+                                  maxLines: 2,
+                                ),
+                                SizedBox(height: 12),
+                                Container(
+                                  padding: EdgeInsetsGeometry.fromLTRB(
+                                    10,
+                                    5,
+                                    10,
+                                    5,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: Colors.grey[200],
+                                    borderRadius: BorderRadius.circular(5),
+                                  ),
+                                  child: Text(
+                                    "Đã lưu",
+                                    style: TextStyle(
+                                      fontSize: 12,
+                                      color: Colors.grey,
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                          Icon(Icons.chevron_right, color: Colors.grey),
+                        ],
                       ),
-                      Icon(Icons.chevron_right, color: Colors.grey),
-                    ],
-                  ),
-                ),
+                    ),
+                  );
+                },
               );
             },
           ),
