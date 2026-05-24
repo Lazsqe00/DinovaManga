@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../controller/history_controller.dart';
 import '../controller/search_controller.dart';
 import '../models/manga_model.dart';
 import '../models/manga_resource.dart';
+import 'page_chi_tiet.dart';
 
 
 class MangaSearchDelegate extends SearchDelegate {
@@ -112,7 +114,9 @@ class MangaSearchDelegate extends SearchDelegate {
 
       // nhấn vào truyện, chuyển sang trang chi tiết
       onTap: () {
-        close(context, manga.slug);
+        close(context, null);
+        Get.find<HistoryController>().addToHistory(manga);
+        Get.to(() => PageChitiet1(manga: manga));
       },
     );
   }

@@ -48,6 +48,16 @@ class HistoryController extends GetxController {
     );
   }
 
+  // Xóa một truyện khỏi lịch sử theo slug
+  Future<void> removeFromHistory(String slug) async {
+    historyList.removeWhere((m) => m.slug == slug);
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setStringList(
+      _key,
+      historyList.map((m) => '${m.slug}|||${m.title}|||${m.thumbUrl}').toList(),
+    );
+  }
+
   // Xóa toàn bộ lịch sử
   Future<void> clearHistory() async {
     historyList.clear();
