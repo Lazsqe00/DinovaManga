@@ -1,3 +1,4 @@
+import 'category_model.dart';
 import 'chapter_model.dart';
 
 class MangaDetail {
@@ -7,6 +8,7 @@ class MangaDetail {
   String status;
   String updatedAt;
   List<ChapterModel> chapters;
+  List<CategoryModel> categories;
 
   MangaDetail({
     required this.title,
@@ -15,6 +17,7 @@ class MangaDetail {
     required this.status,
     required this.chapters,
     required this.updatedAt,
+    required this.categories
   });
 
   factory MangaDetail.fromJson(Map<String, dynamic> json) {
@@ -22,12 +25,17 @@ class MangaDetail {
     String slug = json['slug'];
     List<ChapterModel> chapterList = [];
     if (chapters.isNotEmpty) {
-      var chapterRaw = json['chapters'][0]['server_data'];
+      var chapterRaw = json['chapters'][0]['server_data'];//['chapters'][0]: lấy Server đầu tiên, server_data: lất ra all chapter truyện
 
       chapterList = chapterRaw
           .map<ChapterModel>((c) => ChapterModel.fromJson(c, slug))
           .toList();
     }
+
+    //thêm categories
+    var listCategory = json['category'] as List? ??[];
+    // //chuyển môĩ đối tượng trong list về CategoryModel
+    var categories = listCategory.map((e) => CategoryModel.fromJson(e),).toList();
 
     return MangaDetail(
       title: json['name'] ?? '',
@@ -36,6 +44,7 @@ class MangaDetail {
       status: json['status'] ?? '',
       updatedAt: json['updatedAt'],
       chapters: chapterList,
+      categories: categories
     );
   }
 }

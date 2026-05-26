@@ -106,19 +106,8 @@ class PageChitiet1 extends StatelessWidget {
                                 ],
                               ),
                               Text('Tác giả: ${detail.author}'),
-                              Text('Thể loại: Đang cập nhật'),
-                              //Không có đánh giá
-                              // Row(
-                              //   children: [
-                              //     Text('Đánh giá: '),
-                              //     Icon(
-                              //       Icons.star,
-                              //       color: Colors.yellow,
-                              //       size: 20,
-                              //     ),
-                              //     Text('4.5'),
-                              //   ],
-                              // ),
+                              Text('Thể loại: ${detail.categories.map((e) => e.name,).join(", ")}'),
+
                               SizedBox(
                                 width: double.infinity,
                                 //chiếm hết chiều ngang

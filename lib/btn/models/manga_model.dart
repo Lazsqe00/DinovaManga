@@ -1,7 +1,7 @@
 class MangaModel {
-  String title;
-  String thumbUrl;
-  String slug;
+  String title;//tên bộ truyện
+  String thumbUrl;//tên ảnh bìa
+  String slug;//định danh cho bộ truyện, giữa các từ các dấu cách,(~tên truyện)
 
   MangaModel({required this.title, required this.thumbUrl, required this.slug});
 

@@ -125,7 +125,7 @@ class PageDocTruyen extends StatelessWidget {
             ); // Kiểm tra xem data có thực sự tồn tại không
             print("Đang chuẩn bị vào hàm getImagesURL...");
             var getImages = controller.getImagesURL(asyncSnapshot.data!);
-            return ListView.builder(
+            return ListView.builder(//lướt tới đâu render tới đó
               //lướt tới đâu render tới đó
               padding: EdgeInsets.zero,
               itemCount: getImages.length,

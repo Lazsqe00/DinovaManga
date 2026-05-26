@@ -7,7 +7,7 @@ class CategoryModel {
 
   factory CategoryModel.fromJson(Map<String, dynamic> json) {
     return CategoryModel(
-      id: json['_id'] as String,
+      id: json['_id'] ?? json['id'] as String,//cùng cấu trúc category trong page truyện
       name: json['name'] as String,
       slug: json['slug'] as String,
     );
