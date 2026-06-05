@@ -25,16 +25,16 @@ class MangaDetail {
     String slug = json['slug'];
     List<ChapterModel> chapterList = [];
     if (chapters.isNotEmpty) {
-      var chapterRaw = json['chapters'][0]['server_data'];//['chapters'][0]: lấy Server đầu tiên, server_data: lất ra all chapter truyện
+      var chapterRaw = json['chapters'][0]['server_data'];
 
       chapterList = chapterRaw
           .map<ChapterModel>((c) => ChapterModel.fromJson(c, slug))
           .toList();
     }
 
-    //thêm categories
+
     var listCategory = json['category'] as List? ??[];
-    // //chuyển môĩ đối tượng trong list về CategoryModel
+
     var categories = listCategory.map((e) => CategoryModel.fromJson(e),).toList();
 
     return MangaDetail(

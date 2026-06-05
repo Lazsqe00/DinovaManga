@@ -29,14 +29,12 @@ class PageHistory extends StatelessWidget {
             MangaModel manga = historyController.historyList[index];
             return Slidable(
               key: ValueKey(manga.slug),
-              // Luật sang trái để hiện nút xóa
               endActionPane: ActionPane(
                 motion: DrawerMotion(),
                 extentRatio: 0.25,
                 children: [
                   SlidableAction(
                     onPressed: (_) async {
-                      // Hỏi xác nhận trước khi xóa
                       final confirm = await showDialog<bool>(
                         context: context,
                         builder: (ctx) => AlertDialog(

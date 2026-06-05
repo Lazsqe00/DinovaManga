@@ -19,11 +19,9 @@ class MangaController extends GetxController {
   var lsManga = <MangaModel>[].obs;
   var isLoading = true.obs;
 
-  var showChapters = true.obs; // ẩn/hiện điều hướng trang đọc truyện
+  var showChapters = true.obs;
   bool isNetworkError = false;
-  // var currentManga =Rxn<MangaModel>();
-  // var currentMangaDetail = Rxn<MangaDetail>();
-  // var isAscending = false.obs;
+
 
   @override
   void onInit() {
@@ -90,7 +88,7 @@ class MangaController extends GetxController {
     }
   }
 
-  // Lấy danh sách manga theo thể loại (dùng slug của thể loại)
+
   Future<List<MangaModel>> fetchMangaByCategory(String categorySlug) async {
     final url =
         "${mangaResources.baseUrl}${mangaResources.endpoints["the_loai"]}/$categorySlug";

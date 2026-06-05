@@ -22,7 +22,6 @@ class PageDanhSachChuong extends StatelessWidget {
           IconButton(
             icon: Icon(Icons.search),
             onPressed: () {
-              // Mở trang tìm kiếm
               showSearch(
                 context: context,
                 delegate: TimKiemChuong(detail: detail),
@@ -61,7 +60,6 @@ class PageDanhSachChuong extends StatelessWidget {
                       trailing: Obx(
                         () => IconButton(
                           onPressed: () {
-                            //dổi hình ngôi sao, dùng Obx()
                             controllerBookmark.chapterBookmark(
                               context,
                               chapter,
@@ -75,18 +73,6 @@ class PageDanhSachChuong extends StatelessWidget {
                               : Icon(Icons.star_border),
                         ),
                       ),
-                      //API Không có lượt xem, ngày câp nhật cho từng chương
-                      // trailing: Column(
-                      //   children: [
-                      //     Row(
-                      //       mainAxisSize: MainAxisSize.min,//lỗi tràn!!!
-                      //       children: [
-                      //         Text('lượt xem'),
-                      //         Icon(Icons.remove_red_eye_outlined),
-                      //       ],
-                      //     ),
-                      //   ],
-                      // ),
                     ),
                   );
                 },

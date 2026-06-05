@@ -56,7 +56,6 @@ class PageChitiet1 extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: .start,
                 children: [
-                  //chứa ảnh và thông tin truyện
                   IntrinsicHeight(
                     child: Row(
                       crossAxisAlignment: .start,
@@ -79,7 +78,7 @@ class PageChitiet1 extends StatelessWidget {
                         Expanded(
                           child: Column(
                             crossAxisAlignment: .start,
-                            mainAxisAlignment: .spaceBetween, //
+                            mainAxisAlignment: .spaceBetween,
                             children: [
                               Text(
                                 manga.title,
@@ -134,7 +133,6 @@ class PageChitiet1 extends StatelessWidget {
                   ),
                   SizedBox(height: 15),
 
-                  //Mô tả truyện
                   Text('Giới thiệu truyện:'),
                   SizedBox(height: 6),
                   ReadMoreText(

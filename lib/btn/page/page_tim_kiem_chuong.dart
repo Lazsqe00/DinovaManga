@@ -17,7 +17,7 @@ class TimKiemChuong extends SearchDelegate {
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
-          query = ''; // Xóa nội dung đang gõ
+          query = '';
         },
       ),
     ];
@@ -29,7 +29,7 @@ class TimKiemChuong extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, null); // Đóng trang tìm kiếm
+        close(context, null);
       },
     );
   }
@@ -57,12 +57,11 @@ class TimKiemChuong extends SearchDelegate {
       );
     }
 
-    // Tìm chương có tên trùng với số vừa nhập
     final ketQua = detail.chapters.where((chuong) {
       return chuong.chapterName.toString() == query.trim();
     }).toList();
 
-    // Không tìm thấy chương nào
+
     if (ketQua.isEmpty) {
       return Center(
         child: Text(
@@ -77,7 +76,7 @@ class TimKiemChuong extends SearchDelegate {
       itemCount: ketQua.length,
       itemBuilder: (context, index) {
         final chuong = ketQua[index];
-        final viTri = detail.chapters.indexOf(chuong); //  vị trí chương
+        final viTri = detail.chapters.indexOf(chuong);
 
         return Card(
           margin: EdgeInsets.symmetric(horizontal: 8, vertical: 4),
@@ -86,7 +85,7 @@ class TimKiemChuong extends SearchDelegate {
             trailing: Icon(Icons.arrow_forward_ios, size: 16),
             onTap: () {
               close(context, null);
-              // Mở trang đọc truyện
+
               Get.to(() => PageDocTruyen(
                     chuong: chuong.chapterName,
                     chapter: chuong,
@@ -100,7 +99,6 @@ class TimKiemChuong extends SearchDelegate {
     );
   }
 
-  // Chỉ cho nhập số
   @override
   TextInputType get keyboardType => TextInputType.number;
 

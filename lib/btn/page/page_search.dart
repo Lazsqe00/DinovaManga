@@ -16,7 +16,6 @@ class MangaSearchDelegate extends SearchDelegate {
   @override
   List<Widget> buildActions(BuildContext context) {
     return [
-      // Nút xóa
       IconButton(
         icon: Icon(Icons.clear),
         onPressed: () {
@@ -32,7 +31,7 @@ class MangaSearchDelegate extends SearchDelegate {
     return IconButton(
       icon: Icon(Icons.arrow_back),
       onPressed: () {
-        close(context, null); // Đóng tìm kiếm
+        close(context, null);
       },
     );
   }
@@ -40,7 +39,6 @@ class MangaSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildResults(BuildContext context) {
-    // Gọi API tìm kiếm với từ khóa
     searchController.searchManga(query);
     return _buildResultList();
   }
@@ -48,7 +46,6 @@ class MangaSearchDelegate extends SearchDelegate {
 
   @override
   Widget buildSuggestions(BuildContext context) {
-    // gợi ý tìm kiếm
     searchController.searchManga(query);
     return _buildResultList();
   }
@@ -70,12 +67,11 @@ class MangaSearchDelegate extends SearchDelegate {
         return Center(child: Text('Nhập tên truyện để tìm kiếm'));
       }
 
-      // Không có kết quả
       if (searchController.searchResults.isEmpty) {
         return Center(child: Text('Không tìm thấy truyện nào'));
       }
 
-      // Có kết quả
+
       List<MangaModel> results = searchController.searchResults;
       return ListView.separated(
           itemBuilder: (context, index) {
@@ -97,7 +93,6 @@ class MangaSearchDelegate extends SearchDelegate {
           width: 50,
           height: 70,
           fit: BoxFit.cover,
-          // nếu ảnh lỗi
           errorBuilder: (context, error, stackTrace) {
             return Icon(Icons.broken_image, size: 50);
           },
@@ -112,7 +107,6 @@ class MangaSearchDelegate extends SearchDelegate {
         style: TextStyle(fontSize: 20),
       ),
 
-      // nhấn vào truyện, chuyển sang trang chi tiết
       onTap: () {
         close(context, null);
         Get.find<HistoryController>().addToHistory(manga);

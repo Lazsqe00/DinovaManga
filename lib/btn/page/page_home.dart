@@ -79,7 +79,7 @@ class HomeScreen extends StatelessWidget {
             iconSize: 29.0,
           ),
           IconButton(
-            icon: const Icon(Icons.bookmark_border_outlined),
+            icon: Icon(Icons.bookmark_border_outlined),
             onPressed: () {
               Get.to(Favorites());
             },

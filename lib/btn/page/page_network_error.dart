@@ -16,8 +16,7 @@ class PageNetworkError extends StatelessWidget {
           child: Container(
             color: Theme.of(context).scaffoldBackgroundColor,
             child: Center(
-              child: const Column(
-                // mainAxisAlignment: MainAxisAlignment.center,
+              child: Column(
                 crossAxisAlignment: .center,
                 children: [
                   Icon(Icons.wifi_off, size: 70, color: Colors.grey),

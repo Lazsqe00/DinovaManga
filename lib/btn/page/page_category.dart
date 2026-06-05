@@ -48,7 +48,7 @@ class PageCategory extends StatelessWidget {
   }
 }
 
-// Card hiển thị manga trong trang thể loại (giống New Releases)
+
 Widget _categoryMangaCard(
   MangaModel manga,
   BuildContext context,

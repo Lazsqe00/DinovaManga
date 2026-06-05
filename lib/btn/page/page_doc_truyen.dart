@@ -26,12 +26,10 @@ class PageDocTruyen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // body tràn dưới AppBar
       extendBodyBehindAppBar: true,
       extendBody: true,
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
-        //định nghĩa size cho appBar
         child: Obx(
           () => controller.showChapters.value
               ? AppBar(
@@ -54,14 +52,14 @@ class PageDocTruyen extends StatelessWidget {
                     ),
                   ],
                 )
-              : SizedBox.shrink(), //trả về rồng nếu false
+              : SizedBox.shrink(),
         ),
       ),
       //THANH ĐIỀU HƯỚNG DƯỚI
       bottomNavigationBar: Obx(
         () => AnimatedContainer(
-          duration: const Duration(milliseconds: 300),
-          height: controller.showChapters.value ? 70 : 0, // Ẩn hiện
+          duration: Duration(milliseconds: 300),
+          height: controller.showChapters.value ? 70 : 0,
           child: controller.showChapters.value
               ? BottomAppBar(
                   color: Colors.black.withValues(alpha: 0.35),
@@ -112,39 +110,34 @@ class PageDocTruyen extends StatelessWidget {
               );
             }
             if (!asyncSnapshot.hasData) {
-              return Center(child: CircularProgressIndicator()); //vòng quay
+              return Center(child: CircularProgressIndicator());
             }
 
             var data = asyncSnapshot.data!;
-            // final String domain = data['domain_cdn'];
-            // final item = data['item'];
-            // final String path = item['chapter_path'];
-            // final List images = item['chapter_image'];
             print(
               "Snapshot data: ${asyncSnapshot.data}",
-            ); // Kiểm tra xem data có thực sự tồn tại không
+            );
             print("Đang chuẩn bị vào hàm getImagesURL...");
             var getImages = controller.getImagesURL(asyncSnapshot.data!);
-            return ListView.builder(//lướt tới đâu render tới đó
-              //lướt tới đâu render tới đó
+            return ListView.builder(
               padding: EdgeInsets.zero,
               itemCount: getImages.length,
               itemBuilder: (context, index) {
                 return Image.network(
                   getImages[index],
                   fit: BoxFit.fitWidth,
-                  //tự co dãn để lắp đầy chiểu rộng khung chứa
+
                   loadingBuilder: (context, child, loadingProgress) {
-                    //hiệu ứng chờ
-                    if (loadingProgress == null) return child; //trả về ảnh
+
+                    if (loadingProgress == null) return child;
                     return Container(
                       height: 200,
-                      child: const Center(
+                      child:  Center(
                         child: CircularProgressIndicator(),
-                      ), //vòng quay
+                      ),
                     );
                   },
-                  errorBuilder: (context, error, stackTrace) => const SizedBox(
+                  errorBuilder: (context, error, stackTrace) => SizedBox(
                     height: 100,
                     child: Center(
                       child: Icon(Icons.broken_image, color: Colors.grey),

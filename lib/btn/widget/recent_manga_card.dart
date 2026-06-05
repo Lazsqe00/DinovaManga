@@ -10,14 +10,14 @@ Widget recentMangaCard({
   required MangaModel manga,
   required BuildContext context,
 }) {
-  // final controller = Get.find<MangaController>();
+
   return GestureDetector(
     onTap: () {
       Get.find<HistoryController>().addToHistory(manga);
       Get.to(
         PageChitiet1(manga: manga),
         preventDuplicates: false,
-      ); //cho phép mở lại chính trang này
+      );
     },
     child: Container(
       margin: EdgeInsetsGeometry.fromLTRB(5, 10, 2, 5),
